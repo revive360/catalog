@@ -42,7 +42,7 @@ def compact_label(record: dict, state: str) -> tuple[str, str]:
 
 def state_icon(kind: str, x: float, ink: str, background: str) -> str:
     paths = {
-        "official": '<path d="M0-9l2.8 5.7 6.3.9-4.6 4.5 1.1 6.3L0 4.4l-5.6 3 1.1-6.3-4.6-4.5 6.3-.9z"/>',
+        "official": '<path d="M0-6l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="none" stroke-width="1.1"/>',
         "reviewed": '<path d="M-7 0l4.5 4.5L7-6" fill="none" stroke-width="2.8"/>',
         "outdated": '<path d="M0-9L9 7H-9z" stroke-width="1.3"/>'
                     f'<path d="M0-3v4" stroke="{background}" stroke-width="2"/>'

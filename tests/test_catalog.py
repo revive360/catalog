@@ -193,6 +193,24 @@ class CatalogTests(unittest.TestCase):
                     a,b=sorted([luminance(foreground),luminance(panel.attrib['fill'])])
                     self.assertGreaterEqual((b+0.05)/(a+0.05),4.5)
 
+    def test_official_star_is_small_outlined_and_aligned_with_text_baseline(self):
+        svg=badge_svg(fixture('tube360'),TODAY)
+        ns={'s':'http://www.w3.org/2000/svg'}
+        tree=ElementTree.fromstring(svg)
+        star=tree.find('.//s:g[@data-icon="official"]/s:path',ns)
+        self.assertEqual(star.attrib['fill'],'none')
+        self.assertLessEqual(float(star.attrib['stroke-width']),1.25)
+        image=Image.open(io.BytesIO(png(svg))).convert('RGB')
+        # The center remains the panel color, rather than a solid neon mass.
+        self.assertEqual(image.getpixel((284,36)),(32,60,18))
+        points=[(x,y) for y in range(12,56) for x in range(264,304)
+                if (lambda color:color[0]>120 and color[1]>200 and color[2]<120)(image.getpixel((x,y)))]
+        self.assertTrue(points)
+        self.assertLessEqual(max(x for x,y in points)-min(x for x,y in points)+1,27)
+        self.assertLessEqual(max(y for x,y in points)-min(y for x,y in points)+1,26)
+        baseline=float(tree.findall('.//s:text',ns)[-1].attrib['y'])
+        self.assertLessEqual(abs(max(y for x,y in points)/2-baseline),1)
+
     def test_snippet_alts_follow_states_and_the_requested_snapshot_date(self):
         for slug,word in [('tube360','Official'),('sample-reviewed','Reviewed v1.2.3'),('sample-unreviewed','Outdated v1.2.3'),('sample-expired','Expired'),('sample-revoked','Revoked')]:
             self.assertIn(f'[![Revive360 {word}]',snippet(fixture(slug),as_of=TODAY))
