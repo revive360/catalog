@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/revive360/catalog/blob/main/schema/app.schema.json",
+  "title": "Revive360 app record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "summary",
+    "tier",
+    "repository",
+    "owner",
+    "license",
+    "example"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 70
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "tier": {
+      "enum": [
+        "project",
+        "reviewed",
+        "community"
+      ]
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^https://github.com/[A-Za-z0-9-]+/[A-Za-z0-9_.-]+$"
+    },
+    "owner": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$"
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "example": {
+      "type": "boolean"
+    },
+    "example_note": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "current": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "source_commit",
+        "sha256",
+        "artifact_url"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^\\s<>]+$",
+          "maxLength": 1000
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewer",
+        "reviewed_on",
+        "release",
+        "self_review_exception",
+        "builder",
+        "evidence_url",
+        "console"
+      ],
+      "properties": {
+        "reviewer": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$"
+        },
+        "reviewed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "release": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "source_commit",
+            "sha256",
+            "artifact_url"
+          ],
+          "properties": {
+            "version": {
+              "type": "string",
+              "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+            },
+            "source_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "artifact_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^\\s<>]+$",
+              "maxLength": 1000
+            }
+          }
+        },
+        "self_review_exception": {
+          "type": "boolean"
+        },
+        "builder": {
+          "enum": [
+            "org-ci",
+            "author"
+          ]
+        },
+        "evidence_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^\\s<>]+$",
+          "maxLength": 1000
+        },
+        "attestation_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^\\s<>]+$",
+          "maxLength": 1000
+        },
+        "ci_run_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^\\s<>]+$",
+          "maxLength": 1000
+        },
+        "author_confirmed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "expires_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "console": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "result",
+            "record_url"
+          ],
+          "properties": {
+            "result": {
+              "enum": [
+                "passed",
+                "illustration"
+              ]
+            },
+            "record_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^\\s<>]+$",
+              "maxLength": 1000
+            }
+          }
+        }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "reason"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "tier": {
+            "enum": [
+              "project",
+              "reviewed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "current",
+          "review"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "review"
+              ]
+            },
+            {
+              "required": [
+                "revocation"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "example": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "example_note"
+        ]
+      }
+    }
+  ]
+}

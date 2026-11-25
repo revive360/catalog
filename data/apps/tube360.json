@@ -1,0 +1,36 @@
+{
+  "id": "tube360",
+  "name": "Tube360",
+  "summary": "Native YouTube app for Xbox 360. Project badge layout demonstration.",
+  "tier": "project",
+  "repository": "https://github.com/revive360/tube360",
+  "owner": "PedroHenrique0713",
+  "license": "MIT",
+  "example": true,
+  "example_note": "Demonstration only. Actual repository remains https://github.com/PedroHenrique0713/tube360. No transfer, review, real-console test or signed CI release is claimed. Version, commits, hashes and evidence are synthetic.",
+  "current": {
+    "version": "v1.2.3",
+    "source_commit": "1111111111111111111111111111111111111111",
+    "sha256": "9451b61b23b1ce70e8b5c36107702e495637bdd883845f047a7e7b7e79c2c46e",
+    "artifact_url": "https://example.invalid/illustration.zip"
+  },
+  "review": {
+    "reviewer": "PedroHenrique0713",
+    "reviewed_on": "2026-11-25",
+    "release": {
+      "version": "v1.2.3",
+      "source_commit": "1111111111111111111111111111111111111111",
+      "sha256": "9451b61b23b1ce70e8b5c36107702e495637bdd883845f047a7e7b7e79c2c46e",
+      "artifact_url": "https://example.invalid/illustration.zip"
+    },
+    "self_review_exception": true,
+    "builder": "org-ci",
+    "evidence_url": "https://example.invalid/review",
+    "ci_run_url": "https://example.invalid/ci",
+    "attestation_url": "https://example.invalid/attestation",
+    "console": {
+      "result": "illustration",
+      "record_url": "https://example.invalid/console"
+    }
+  }
+}

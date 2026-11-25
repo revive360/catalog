@@ -1,0 +1,36 @@
+{
+  "id": "sample-unreviewed",
+  "name": "Orbit Notes: new version (fictional)",
+  "summary": "Fictional external app illustrating catalog states.",
+  "tier": "reviewed",
+  "repository": "https://github.com/example-author/orbit-notes",
+  "owner": "example-author",
+  "license": "MIT",
+  "example": true,
+  "example_note": "Fictional demonstration. No application, tested binary, real author or actual review is claimed; all evidence is synthetic.",
+  "current": {
+    "version": "v1.3.0",
+    "source_commit": "2222222222222222222222222222222222222222",
+    "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "artifact_url": "https://example.invalid/illustration.zip"
+  },
+  "review": {
+    "reviewer": "PedroHenrique0713",
+    "reviewed_on": "2026-11-25",
+    "release": {
+      "version": "v1.2.3",
+      "source_commit": "1111111111111111111111111111111111111111",
+      "sha256": "9451b61b23b1ce70e8b5c36107702e495637bdd883845f047a7e7b7e79c2c46e",
+      "artifact_url": "https://example.invalid/illustration.zip"
+    },
+    "self_review_exception": false,
+    "builder": "author",
+    "evidence_url": "https://example.invalid/review",
+    "console": {
+      "result": "illustration",
+      "record_url": "https://example.invalid/console"
+    },
+    "author_confirmed_on": "2026-11-25",
+    "expires_on": "2027-03-09"
+  }
+}

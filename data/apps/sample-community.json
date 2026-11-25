@@ -1,0 +1,11 @@
+{
+  "id": "sample-community",
+  "name": "Pocket Sketch (fictional)",
+  "summary": "Unverified discovery-only illustration.",
+  "tier": "community",
+  "repository": "https://github.com/example-author/pocket-sketch",
+  "owner": "example-author",
+  "license": "MIT",
+  "example": true,
+  "example_note": "Fictional discovery entry, no verification and no badge."
+}
