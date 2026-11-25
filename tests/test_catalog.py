@@ -130,6 +130,13 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("github.com/revive360/catalog/blob/main/generated/apps/sample-reviewed.md", text)
         self.assertIn("raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-reviewed.svg", text)
 
+    def test_every_external_record_states_version_scope_and_no_org_updates(self):
+        for slug in ("sample-reviewed", "sample-unreviewed", "sample-revoked", "sample-expired"):
+            with self.subTest(slug=slug):
+                text = record_markdown(fixture(slug), TODAY)
+                self.assertIn("only the recorded version/hash/date", text)
+                self.assertIn("No org update channel", text)
+
     def test_generation_is_deterministic_and_prunes_stale_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "out"

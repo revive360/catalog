@@ -175,6 +175,8 @@ def record_markdown(record: dict, today: date) -> str:
         for key in ("ci_run_url", "attestation_url", "author_confirmed_on", "expires_on"):
             if key in r:
                 parts += [f'{key}: {r[key]}']
+        if record["tier"] == "reviewed":
+            parts += ['**External review covers only the recorded version/hash/date.** The author builds and distributes the app; Revive360 checks the hash and source linkage. **No org update channel.** New versions or replaced binaries return to the manual FIFO queue (14-day target). Author disappearance expires the badge.']
         cur = record["current"]
         parts += ['## Current recorded release', f'Version: **{cur["version"]}**',
                   f'Source commit: `{cur["source_commit"]}`', f'SHA-256: `{cur["sha256"]}`']

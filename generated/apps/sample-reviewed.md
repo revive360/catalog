@@ -34,6 +34,8 @@ author_confirmed_on: 2026-11-25
 
 expires_on: 2027-03-09
 
+**External review covers only the recorded version/hash/date.** The author builds and distributes the app; Revive360 checks the hash and source linkage. **No org update channel.** New versions or replaced binaries return to the manual FIFO queue (14-day target). Author disappearance expires the badge.
+
 ## Current recorded release
 
 Version: **v1.2.3**
