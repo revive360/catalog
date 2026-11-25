@@ -10,6 +10,7 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 import markdown
+import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from catalog.build import ROOT, COMMUNITY_WARNING, LABELS, STATES, badge_svg, project_medal_svg, effective_status, load_records
@@ -59,10 +60,31 @@ def gather(workspace: Path) -> list[Path]:
             if any(part in ('.git', '.deps', '.venv', '.work', 'build', 'dist', '__pycache__') for part in relative.parts):
                 continue
             result.append(path.resolve())
+    result.extend(path.resolve() for path in (workspace / '.github/.github/ISSUE_TEMPLATE').glob('*.yml'))
     return sorted(result, key=lambda p: str(p.relative_to(workspace)))
 
 
 def render_document(path: Path, ids: dict[Path, str]) -> str:
+    if path.suffix == '.yml':
+        form = yaml.safe_load(path.read_text())
+        chunks = [f'<h1>{escape(form.get("name", "Onde trocar ideia"))}</h1>',
+                  f'<p>{escape(form.get("description", "Cola no canal certo e traz o que precisa."))}</p>']
+        for field in form.get('body', []):
+            attributes = field['attributes']
+            if field['type'] == 'markdown':
+                chunks.append(f'<p>{escape(attributes["value"])}</p>')
+                continue
+            chunks.append(f'<h3>{escape(attributes["label"])}</h3>')
+            if attributes.get('description'):
+                chunks.append(f'<p>{escape(attributes["description"])}</p>')
+            for option in attributes.get('options', []):
+                label = option['label'] if isinstance(option, dict) else option
+                chunks.append(f'<p>• {escape(label)}</p>')
+            if field.get('validations', {}).get('required'):
+                chunks.append('<small>Campo obrigatório</small>')
+        for contact in form.get('contact_links', []):
+            chunks.append(f'<h3><a href="{escape(contact["url"], quote=True)}">{escape(contact["name"])}</a></h3><p>{escape(contact["about"])}</p>')
+        return ''.join(chunks)
     body = markdown.markdown(path.read_text(), extensions=['fenced_code', 'tables'])
     def local_link(match):
         raw = match.group(1)
@@ -105,15 +127,15 @@ def generate(output: Path, today: date) -> int:
     html = ['<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revive360 · prévia R2</title><style>' + STYLE + '</style></head><body>',
             '<p class="notice">Prévia local R2 · 25 de novembro de 2026 · Nenhuma publicação ou configuração do GitHub foi executada.</p><main>',
             '<header class="masthead"><div class="wordmark">Revive360</div><nav aria-label="Seções"><a href="#niveis">Três níveis</a><a href="#selos">Selos</a><a href="#catalogo">Catálogo</a><a href="#perfil">Perfil</a><a href="#documentos">Documentos</a></nav></header>',
-            '<div class="hero"><div><span class="power">Software aberto. Console de verdade.</span><h1>Uma nova vida<br>para o seu 360.</h1><p>Apps novos para um console de vinte anos. Código aberto, origem conferida e regras claras sobre o que cada selo significa.</p><p class="sub">Organização: <a href="https://github.com/revive360">github.com/revive360</a><br>Fundador e único dono hoje: Pedro.</p></div>',
+            '<div class="hero"><div><span class="power">Código aberto. Feito pra rodar.</span><h1>O 360 tá vivo.<br>Cola pra construir.</h1><p>App pro 360, fonte na mesa e teste no console. Chega com uma ideia que soma, traz o código e responde por ele. Lê as onze regras da casa.</p><p class="sub">Organização: <a href="https://github.com/revive360">github.com/revive360</a><br>Fundador e único dono hoje: Pedro.</p></div>',
             f'<img class="avatar" src="data:image/jpeg;base64,{avatar}" alt="Mascote original Revive360, um console com controle e uma xícara"></div>',
-            '<section id="niveis"><h2>Três níveis. Três compromissos.</h2><p class="lead">A ficha no catálogo é a fonte da verdade. Ser membro não é selo. Uma imagem copiada não substitui a conferência do link, da versão e do hash.</p>',
+            '<section id="niveis"><h2>Escolhe o caminho. Assume a responsa.</h2><p class="lead">A ficha no catálogo é a fonte da verdade. Ser membro não é selo. Uma imagem copiada não substitui a conferência do link, da versão e do hash.</p>',
             '<div class="level"><h3><span class="mark">Revive360 Project</span></h3><div><p>Repo dentro da org, com nossas regras de segurança, PR revisado e release construída no CI com hash e assinatura/atestação. Validade contínua enquanto cumprir as regras.</p><small>Selo verde com mascote. O nível mais forte.</small></div></div>',
             '<div class="level reviewed"><h3><span class="mark">Reviewed · vX.Y.Z</span></h3><div><p>Repo fica com o autor. A revisão cobre só a versão e o hash na data registrada. O autor compila; a org confere o binário e o vínculo ao fonte. Não há canal de atualização da org.</p><p>Versão nova volta à fila manual. Até o aceite: <strong>versão atual não revisada</strong>. Se o autor sumir, o selo expira.</p><small>Prioridade menor e mais trabalho manual; o caminho Project é o preferencial.</small></div></div>',
             '<div class="level community"><h3><span class="mark">Community list</span></h3><div><p>Descoberta para manter a comunidade viva. Sem selo; pode sair a qualquer momento.</p><p class="warning">Não verificado pela Revive360, não é recomendação, use por sua conta e risco.</p></div></div>',
             '<div class="quick"><div><b>48 horas</b><p>Resposta a segurança em qualquer nível. Revogação imediata se grave.</p></div><div><b>CI automático</b><p>Release Project após revisão e teste do binário exato em console real.</p></div><div><b>14 dias</b><p>Alvo da fila externa, por chegada. Community entra quando der.</p></div></div>',
             '<p>Revisão não é auditoria completa nem garantia. Software fornecido como está, pela licença. Ninguém revisa o próprio app, exceto o fundador Pedro, inclusive no nível máximo, com a exceção registrada.</p></section>',
-            '<section id="selos"><h2>Um selo curto. Uma ficha completa.</h2><p class="lead">Project ganha a medalha com o mascote e verde neon. Os demais ficam no selo de linha. Cada estado tem sua palavra, seu ícone vetorial e sua cor: Official verde neon, Reviewed azul-petróleo, Outdated âmbar, Expired cinza e Revoked vermelho. Official identifica o nível máximo Project, com validade contínua enquanto cumprir as regras. A ficha registra o escopo completo.</p><p><span class="demo-tag">Demo only · exemplos locais</span> Esta indicação fica na prévia, fora das imagens de README.</p><div class="badge-showcase">']
+            '<section id="selos"><h2>O selo chama. A ficha responde.</h2><p class="lead">Project ganha a medalha com o mascote e verde neon. Os demais ficam no selo de linha. Cada estado tem sua palavra, seu ícone vetorial e sua cor: Official verde neon, Reviewed azul-petróleo, Outdated âmbar, Expired cinza e Revoked vermelho. Official identifica o nível máximo Project, com validade contínua enquanto cumprir as regras. A ficha registra o escopo completo.</p><p><span class="demo-tag">Demo only · exemplos locais</span> Esta indicação fica na prévia, fora das imagens de README.</p><div class="badge-showcase">']
     project = next(r for r in records if r['tier'] == 'project')
     project_target = ids[(ROOT / 'generated/apps' / (project['id']+'.md')).resolve()]
     medal_svg = namespace_svg(project_medal_svg(project,today), 'showcase')
@@ -123,7 +145,7 @@ def generate(output: Path, today: date) -> int:
     for slug,label in [('tube360','Project oficial: nível máximo, validade contínua'),('sample-reviewed','Versão revisada: vale para a versão e o hash registrados'),('sample-unreviewed','Versão atual não revisada: v1.2.3 é a versão antes revisada'),('sample-expired','Expirado: o prazo de confirmação do autor terminou'),('sample-revoked','Revogado: a revisão foi retirada; confira a ficha')]:
         r=by_id[slug]; target=ids[(ROOT/'generated/apps'/f'{slug}.md').resolve()]
         html += [f'<div class="badge-sample"><a href="#{target}" aria-label="Conferir {escape(label,quote=True)}">{namespace_svg(badge_svg(r,today),"showcase")}</a><p>{label}</p></div>']
-    html += ['</div></div></section><section id="catalogo"><h2>Catálogo e selos verificáveis</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> Tube360 continua na conta do autor. Seu exemplo Project mostra um futuro repo na org; não afirma transferência, teste físico ou revisão concluída. Os outros apps e as evidências são fictícios.</p>']
+    html += ['</div></div></section><section id="catalogo"><h2>Puxa a ficha antes de rodar.</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> Tube360 continua na conta do autor. Seu exemplo Project mostra um futuro repo na org; não afirma transferência, teste físico ou revisão concluída. Os outros apps e as evidências são fictícios.</p>']
     for tier in ('project', 'reviewed', 'community'):
         html += [f'<div class="catalog-group"><h3>{LABELS[tier]}</h3>']
         for r in records:
@@ -134,12 +156,12 @@ def generate(output: Path, today: date) -> int:
             badge = namespace_svg(badge, 'card')
             html += [f'<article class="app"><div><h3><a href="#{target}">{escape(r["name"])}</a></h3><p>{escape(r["summary"])}</p><p class="status">{STATES[effective_status(r,today)]} <span class="sample">· Exemplo</span></p><p><a href="#{target}">Conferir ficha, hash e escopo</a></p></div><a href="#{target}" aria-label="Conferir ficha de {escape(r["name"],quote=True)}">{badge}</a></article>']
         html += ['</div>']
-    html += ['</section><section id="perfil"><h2>Perfil público da organização</h2><p class="lead">EN primeiro, com versões em português e espanhol. Os três perfis mantêm as seis regras, os níveis e os limites de responsabilidade.</p>']
+    html += ['</section><section id="perfil"><h2>A cara da casa, nos três idiomas</h2><p class="lead">Inglês, português e espanhol. Escolhe o teu. Mesma casa, onze regras; critérios, prazos e responsabilidade continuam explícitos.</p>']
     profiles = []
     for file, language in [('README.md', 'English'), ('README.pt-BR.md', 'Português'), ('README.es.md', 'Español')]:
         path = (workspace / '.github/profile' / file).resolve(); profiles.append(path)
         html += [f'<details class="document" data-label="perfil {language.lower()}" id="{ids[path]}"'+ (' open' if language == 'English' else '') + f'><summary>Perfil · {language}</summary><div class="prose">{render_document(path,ids)}</div></details>']
-    html += ['</section><section id="documentos"><h2>Documentos para revisar</h2>',
+    html += ['</section><section id="documentos"><h2>O combinado tá aqui.</h2>',
              f'<p class="lead">{len(documents)} documentos embutidos de .github, devkit e catalog. Os links internos abrem o documento correspondente; código e fontes externos continuam como links explícitos ao GitHub.</p>',
              '<div class="doc-filter"><label for="filter">Filtrar título</label><input id="filter" type="search" placeholder="Ex.: SETUP, governança, console"><button id="expand" type="button">Abrir documentos</button></div>', '<ul class="doc-index">']
     for path in documents:
@@ -152,7 +174,7 @@ def generate(output: Path, today: date) -> int:
             continue
         label = str(path.relative_to(workspace))
         html += [f'<details class="document" data-label="{escape(label.lower(),quote=True)}" id="{ids[path]}"><summary>{escape(label)}</summary><div class="prose">{render_document(path,ids)}</div></details>']
-    html += ['</section><footer><p><strong>Risco ao usuário:</strong> homebrew pode causar banimento no Xbox Live, perda de dados ou dano ao console. Nada de coleta sem opt-in; login e tokens ficam no console. Nenhum bypass de DRM/paywall. Risco dos termos de terceiros é do autor.</p><p>A org não recebe nem divide doações. Até dezembro, segurança por private vulnerability reporting; comunidade em <a href="https://github.com/orgs/revive360/discussions">Discussions oficiais</a>. <code>CONTACT_DECEMBER_2026_TODO</code>.</p><p>Créditos: xenosworks (xsdk, vulkan4xenon, SDL-xenon), Free60/libxenon. Xbox e Xbox 360 são marcas da Microsoft. Revive360 é independente, sem endosso da Microsoft ou Google.</p><p class="print-note">Arquivo único, sem dependências de rede. A impressão abre os documentos para incluir o conteúdo.</p></footer></main><script>' + SCRIPT + '</script></body></html>']
+    html += ['</section><footer><p><strong>Risco ao usuário:</strong> homebrew pode causar banimento no Xbox Live, perda de dados ou dano ao console. Nada de coleta sem opt-in; login e tokens ficam no console. Nenhum bypass de DRM/paywall. Risco dos termos de terceiros é do autor.</p><p>A org não recebe nem divide doações. Até dezembro, segurança por private vulnerability reporting; comunidade em <a href="https://github.com/orgs/revive360/discussions">Discussions oficiais</a>. <code>CONTACT_DECEMBER_2026_TODO</code>.</p><p>Créditos: xenosworks (xsdk, vulkan4xenon, SDL-xenon), Free60/libxenon. Xbox e Xbox 360 são marcas da Microsoft. Revive360 é independente, sem endosso da Microsoft ou Google.</p><p class="print-note">Abre sem internet. Pra imprimir, o arquivo abre os documentos e leva o conteúdo junto.</p></footer></main><script>' + SCRIPT + '</script></body></html>']
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(''.join(html))
     return len(documents)
