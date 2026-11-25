@@ -1,5 +1,7 @@
 # README badge snippets
 
+Grab the SVG or PNG. Keep the record link attached.
+
 Examples link to demonstration records. SVG assets contain no demo label; inspect the linked record before use.
 
 ## sample-community

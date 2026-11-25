@@ -1,6 +1,6 @@
 # Revive360 catalog
 
-Source of truth for app levels, version-bound external reviews and revocations. Local Python tooling produces a schema-validated record per app, compact SVG/PNG badges, an exclusive Project medal, README snippets and an offline HTML index. Nothing pushes, publishes, contacts an app, queries a console or runs on GitHub by itself.
+Pick an app. Check its record. The badge brings you here so you can see the source, version and hash for yourself. This repo keeps the catalog, builds the SVG/PNG badges and Project medal, and gives you the README snippets. Run it locally; publication is a separate owner action. Nothing pushes, contacts an app or queries a console by itself.
 
 **All included records are demonstrations, including Tube360 Project.** Tube360's actual repository is still [`PedroHenrique0713/tube360`](https://github.com/PedroHenrique0713/tube360); its sample targets the future `revive360/tube360` repository. No transfer, review, real-console acceptance or signed org release is asserted. Sample commits, versions, hashes and `.invalid` evidence URLs are synthetic and never usable certificates. Other app names/accounts are fictional examples.
 
@@ -12,9 +12,9 @@ Source of truth for app levels, version-bound external reviews and revocations. 
 
 Security response at all levels: 48 hours, severe findings revoke immediately. The org takes responsibility for its repos and reviewed external versions within [the review scope](https://github.com/revive360/.github/blob/main/REVIEW.md), never a full audit/warranty. Founder Pedro alone may review his own app, including at the highest level; records explicitly mark the exception. Membership is not a badge; unlisted member repos are the author's responsibility. Software is as is under its license. No donations received/split.
 
-## Local use
+## Run the catalog
 
-Python 3.12+, with exact Python dependency versions in `requirements.txt`:
+Bring Python 3.12+. Install the pinned dependencies, run the checks and build the pages:
 
 ```sh
 python3 -m venv .venv
@@ -23,7 +23,7 @@ python3 -m venv .venv
 .venv/bin/python -m catalog.build --as-of 2026-11-25
 ```
 
-Open [generated/index.html](generated/index.html), [the catalog index](generated/README.md) or [README snippets](generated/snippets.md). The committed snapshot uses a fixed date so it is reproducible. For operational refresh use `.venv/bin/python -m catalog.build` (today), never the fixture date. `--data` and `--output` select separate directories; generation validates every record before replacing generated files and removes stale badges. Output must be empty or carry the generator's `.catalog-generated` marker; unrelated directories are refused.
+Take a look at [generated/index.html](generated/index.html), [the catalog index](generated/README.md) or grab the [README snippets](generated/snippets.md). Keep the record link attached when you use a badge. The committed snapshot uses a fixed date so it is reproducible. For operational refresh use `.venv/bin/python -m catalog.build` (today), never the fixture date. `--data` and `--output` select separate directories; generation validates every record before replacing generated files and removes stale badges. Output must be empty or carry the generator's `.catalog-generated` marker; unrelated directories are refused.
 
 README badges use two parts: mascot + **Revive360**, then a distinct vector icon, word and palette for each state. **Official** with a star is the highest, continuous Project level: dark with a bright neon-green border/glow. **Reviewed vX.Y.Z** has a check mark and sober teal; **Outdated vX.Y.Z** has a warning triangle and amber (the displayed version is the historical review); **Expired** has an hourglass and gray; **Revoked** has a cross and red. Icons are SVG paths, never emoji glyphs. Text sits on opaque fills for legibility in light and dark README themes. Accessible titles and snippets identify the state. The approved Project medal is unchanged. **No SVG/PNG includes a demo label**; the preview shows it outside the image, with a Portuguese legend next to each state. PNGs use pinned `resvg-py` with the bundled licensed font and no system-font lookup. See [asset provenance](assets/README.md).
 
@@ -37,15 +37,15 @@ README badges use two parts: mascot + **Revive360**, then a distinct vector icon
 - External contact policy starts at 90 days plus a 14-day response window, encoded by `author_confirmed_on`/`expires_on` (maximum 104 days). Update only after author confirmation; contact does not approve a new binary. New policy durations require coordinated schema/semantic/test and governance updates.
 - `.github/workflows/ci.yml` is prepared, not executed remotely. It validates/tests, reproduces the fixture snapshot and renders today's statuses as a 7-day artifact. It **does not deploy** that artifact or refresh public badges. The owner must publish reviewed status changes. SHA-pinned Actions, read-only permissions, hosted Linux runner; DCO checks every PR commit. No workflow inheritance is assumed.
 
-## Single-file owner preview
+## Put the whole thing on the table
 
-With sibling `.github` and `devkit` checkouts:
+Keep `.github` and `devkit` next to this checkout, then make the owner preview:
 
 ```sh
 .venv/bin/python scripts/preview.py --output build/preview/index.html
 ```
 
-It embeds the current profile in all three languages, every first-party Markdown document from all three repositories, records and rendered badges, including the original mascot. No CDN/font/image requests. The separate generated catalog index remains usable independently. Large upstream license texts are linked as repository sources rather than reproduced as owner policy.
+One file to pass around: profiles in three languages, all first-party Markdown docs, readable issue forms, app records, badges and the mascot. Open it offline. No CDN, remote fonts or image requests. The standalone catalog index also works on its own. Upstream license texts keep their source links and are not presented as house policy.
 
 **Risk/privacy:** Homebrew can cause Xbox Live bans, data loss or console damage. No collection without opt-in; login/tokens stay on the console. Third-party terms risk is the author's; no DRM/paywall bypass. Use private vulnerability reporting and [official Discussions](https://github.com/orgs/revive360/discussions) until `CONTACT_DECEMBER_2026_TODO` is replaced with confirmed email/domain in December.
 

@@ -2,13 +2,15 @@
 
 **Reviewed — Revoked**
 
+Check the source, version and hash. The badge links here for a reason.
+
 Status calculated on **2026-11-25** from the recorded data; not live upstream monitoring.
 
 > **DEMONSTRATION ONLY — not a certification.** Fictional demonstration\. No application, tested binary, real author or actual review is claimed; all evidence is synthetic\.
 
 ![Revive360 Revoked](../badges/sample-revoked.svg)
 
-Fictional external app illustrating catalog states\.
+A fictional app, one review and four states\. See what each badge actually covers\.
 
 Repository: https://github.com/example-author/orbit-notes
 
@@ -56,7 +58,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 
 [Review policy, checklist, response priorities and limits](https://github.com/revive360/.github/blob/main/REVIEW.md). Security response: 48 hours; severe findings revoke immediately. External review queue: FIFO, 14-day target.
 
-## README snippet
+## Put it in your README
 
 ```markdown
 [![Revive360 Revoked](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-revoked.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-revoked.md)

@@ -1,7 +1,7 @@
 {
   "id": "sample-revoked",
   "name": "Orbit Notes: revoked (fictional)",
-  "summary": "Fictional external app illustrating catalog states.",
+  "summary": "A fictional app, one review and four states. See what each badge actually covers.",
   "tier": "reviewed",
   "repository": "https://github.com/example-author/orbit-notes",
   "owner": "example-author",

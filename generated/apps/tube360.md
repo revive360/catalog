@@ -2,13 +2,15 @@
 
 **Revive360 Project — Valid**
 
+Check the source, version and hash. The badge links here for a reason.
+
 Status calculated on **2026-11-25** from the recorded data; not live upstream monitoring.
 
 > **DEMONSTRATION ONLY — not a certification.** Demonstration only\. Actual repository remains https://github\.com/PedroHenrique0713/tube360\. No transfer, review, real\-console test or signed CI release is claimed\. Version, commits, hashes and evidence are synthetic\.
 
 ![Revive360 Official](../badges/tube360.svg)
 
-Native YouTube app for Xbox 360\. Project badge layout demonstration\.
+YouTube on the 360\. Here is how its Project record would look\.
 
 Repository: https://github.com/revive360/tube360
 
@@ -48,7 +50,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 
 [Review policy, checklist, response priorities and limits](https://github.com/revive360/.github/blob/main/REVIEW.md). Security response: 48 hours; severe findings revoke immediately. External review queue: FIFO, 14-day target.
 
-## README snippet
+## Put it in your README
 
 ```markdown
 [![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
@@ -56,7 +58,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 
 [Back to catalog](../README.md)
 
-## Project medal for the top of a README
+## Put the Project medal up top
 
 ![Revive360 Project medal](../badges/tube360-medal.svg)
 

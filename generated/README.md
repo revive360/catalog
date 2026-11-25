@@ -1,5 +1,7 @@
 # Revive360 catalog
 
+Meet the apps. Check the record before you run anything.
+
 **Local demonstration dataset. No entry is an active certification.**
 
 Generated for 2026-11-25. Check the linked record, not a copied image.

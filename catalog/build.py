@@ -134,6 +134,7 @@ def snippet(record: dict, *, medal=False, extension="svg", as_of: date | None = 
 def record_markdown(record: dict, today: date) -> str:
     state = effective_status(record, today)
     parts = [f'# {md(record["name"])}', f'**{LABELS[record["tier"]]} — {STATES[state]}**',
+             'Check the source, version and hash. The badge links here for a reason.',
              f'Status calculated on **{today.isoformat()}** from the recorded data; not live upstream monitoring.']
     if record["example"]:
         parts += ['> **DEMONSTRATION ONLY — not a certification.** ' + md(record["example_note"])]
@@ -171,10 +172,10 @@ def record_markdown(record: dict, today: date) -> str:
     parts += ['## Scope and user risk',
               'Review is not a complete audit or warranty. Software is as is under its license. Homebrew risks Xbox Live bans, data loss and console damage. No collection without opt-in; login/tokens stay on the console. No DRM/paywall bypass. Third-party terms risk belongs to the author.',
               '[Review policy, checklist, response priorities and limits](https://github.com/revive360/.github/blob/main/REVIEW.md). Security response: 48 hours; severe findings revoke immediately. External review queue: FIFO, 14-day target.',
-              '## README snippet', '```markdown\n' + snippet(record,as_of=today) + '\n```',
+              '## Put it in your README', '```markdown\n' + snippet(record,as_of=today) + '\n```',
               '[Back to catalog](../README.md)']
     if record["tier"] == "project":
-        parts += ['## Project medal for the top of a README',
+        parts += ['## Put the Project medal up top',
                   f'![Revive360 Project medal](../badges/{record["id"]}-medal.svg)',
                   '```markdown\n' + snippet(record, medal=True,as_of=today) + '\n```',
                   'PNG alternative:\n\n```markdown\n' + snippet(record, medal=True, extension="png",as_of=today) + '\n```']
@@ -211,7 +212,7 @@ def render(data_dir: Path, output: Path, today: date) -> list[dict]:
         notice = ('Local demonstration dataset. No entry is an active certification.' if all(r['example'] for r in records)
                   else 'Includes explicitly marked demonstration entries.' if any(r['example'] for r in records)
                   else 'Verify every badge against its linked catalog record.')
-        index = ['# Revive360 catalog',
+        index = ['# Revive360 catalog', 'Meet the apps. Check the record before you run anything.',
                  f'**{notice}**',
                  f'Generated for {today.isoformat()}. Check the linked record, not a copied image.',
                  'Status is based on manually maintained data. Membership alone is not a badge.']
@@ -244,7 +245,7 @@ def render(data_dir: Path, output: Path, today: date) -> list[dict]:
                 cards.append(f'<article id="{slug}">{body}</article>')
             sections.append(f'<section><h2>{LABELS[tier]}</h2>' + ''.join(cards) + '</section>')
         (staging / "README.md").write_text('\n\n'.join(index) + '\n')
-        snippets = ['# README badge snippets', 'Examples link to demonstration records. SVG assets contain no demo label; inspect the linked record before use.']
+        snippets = ['# README badge snippets', 'Grab the SVG or PNG. Keep the record link attached.', 'Examples link to demonstration records. SVG assets contain no demo label; inspect the linked record before use.']
         for rec in records:
             snippets += [f'## {rec["id"]}', 'Compact SVG:\n\n```markdown\n' + snippet(rec,as_of=today) + '\n```']
             if rec["tier"] != "community":
@@ -254,7 +255,7 @@ def render(data_dir: Path, output: Path, today: date) -> list[dict]:
                     snippets += [f'Project medal ({ext.upper()}):\n\n```markdown\n' + snippet(rec, medal=True, extension=ext,as_of=today) + '\n```']
         (staging / "snippets.md").write_text('\n\n'.join(snippets) + '\n')
         style = 'body{font:17px/1.65 system-ui,sans-serif;max-width:1000px;margin:32px auto;padding:0 20px;color:#20342c;background:#f5f7f7}article{border-top:2px solid #c7d2cd;padding:24px 0}svg{max-width:100%;height:auto}pre{overflow:auto;padding:16px;background:#e4eae7}a{color:#185d99}blockquote{border-left:5px solid #8d3e15;padding-left:20px}code{overflow-wrap:anywhere}h1,h2,h3{line-height:1.2}'
-        (staging / "index.html").write_text('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revive360 catalog</title><style>' + style + '</style><body id="top"><h1>Revive360 catalog</h1><p><strong>' + notice + '</strong></p>' + ''.join(sections) + '</body></html>')
+        (staging / "index.html").write_text('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revive360 catalog</title><style>' + style + '</style><body id="top"><h1>Revive360 catalog</h1><p>Meet the apps. Check the record before you run anything.</p><p><strong>' + notice + '</strong></p>' + ''.join(sections) + '</body></html>')
         # Replace only files owned by the generator; prune removed badges/records.
         for dirname in ("apps", "badges"):
             target = output / dirname
