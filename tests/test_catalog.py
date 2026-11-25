@@ -1,13 +1,16 @@
 from datetime import date
 import json
+import io
 from pathlib import Path
 import tempfile
 import unittest
 from xml.etree import ElementTree
 
 from jsonschema import ValidationError
+from PIL import Image
 from catalog.build import (ROOT, COMMUNITY_WARNING, badge_svg, effective_status,
-                           load_records, record_markdown, render, snippet, validate_record)
+                           load_records, project_medal_svg, record_markdown, render, snippet, validate_record)
+from catalog.badges import png, NEON, GRAY
 
 TODAY = date(2026, 11, 25)
 
@@ -92,7 +95,7 @@ class CatalogTests(unittest.TestCase):
             with self.subTest(key=key):
                 validate_record(r, TODAY)
                 self.assertEqual(effective_status(r, TODAY), "current_unreviewed")
-                self.assertIn("Reviewed · v1.2.3", badge_svg(r, TODAY))
+                self.assertIn("Reviewed v1.2.3", badge_svg(r, TODAY))
                 self.assertIn("Current version not reviewed", record_markdown(r, TODAY))
 
     def test_expiry_inclusive_boundary_and_revocation_precedence(self):
@@ -137,6 +140,46 @@ class CatalogTests(unittest.TestCase):
                 self.assertIn("only the recorded version/hash/date", text)
                 self.assertIn("No org update channel", text)
 
+    def test_readme_badges_are_short_and_do_not_contain_demo_labels(self):
+        labels = {"tube360": "Project", "sample-reviewed": "Reviewed v1.2.3",
+                  "sample-unreviewed": "Reviewed v1.2.3", "sample-expired": "Reviewed v1.2.3",
+                  "sample-revoked": "Revoked"}
+        for slug,label in labels.items():
+            with self.subTest(slug=slug):
+                svg = badge_svg(fixture(slug),TODAY)
+                tree = ElementTree.fromstring(svg)
+                visible = [node.text for node in tree.findall('.//{http://www.w3.org/2000/svg}text')]
+                self.assertEqual(visible, ['Revive360',label])
+                self.assertNotIn('Demo',svg)
+                self.assertEqual(tree.attrib['height'],'36')
+                self.assertIn('data:image/jpeg;base64,',svg)
+        for slug in ('sample-unreviewed','sample-expired'):
+            self.assertIn(GRAY,badge_svg(fixture(slug),TODAY))
+        self.assertIn(NEON,badge_svg(fixture('tube360'),TODAY))
+
+    def test_medal_is_project_only_and_revocation_overrides_green(self):
+        for slug in ('sample-reviewed','sample-unreviewed','sample-revoked','sample-expired','sample-community'):
+            self.assertIsNone(project_medal_svg(fixture(slug),TODAY))
+        r=fixture('tube360'); svg=project_medal_svg(r,TODAY)
+        self.assertEqual(ElementTree.fromstring(svg).attrib['width'],'512')
+        self.assertNotIn('Demo',svg)
+        r['revocation']={'date':'2026-11-25','reason':'Test revocation'}
+        revoked=project_medal_svg(r,TODAY)
+        self.assertIn('Revoked',revoked)
+        self.assertNotIn(NEON,revoked)
+        with self.assertRaises(ValueError):
+            snippet(fixture(),medal=True)
+
+    def test_pngs_render_at_twice_svg_size_with_transparent_medal_corners(self):
+        badge=badge_svg(fixture('tube360'),TODAY)
+        rendered=Image.open(io.BytesIO(png(badge)))
+        self.assertEqual(rendered.size,(418,72))
+        image=Image.open(io.BytesIO(png(project_medal_svg(fixture('tube360'),TODAY))))
+        self.assertEqual(image.size,(1024,1024))
+        self.assertEqual(image.getpixel((0,0))[3],0)
+        self.assertGreater(image.getpixel((512,512))[3],0)
+        self.assertIn('tube360-medal.png',snippet(fixture('tube360'),medal=True,extension='png'))
+
     def test_generation_is_deterministic_and_prunes_stale_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "out"
@@ -147,7 +190,10 @@ class CatalogTests(unittest.TestCase):
             after = {p.relative_to(output): p.read_bytes() for p in output.rglob("*") if p.is_file()}
             self.assertEqual(before, after)
             self.assertEqual(len(list((output / "apps").glob("*.md"))), 6)
-            self.assertEqual(len(list((output / "badges").glob("*.svg"))), 5)
+            self.assertEqual(len(list((output / "badges").glob("*.svg"))), 6)
+            self.assertEqual(len(list((output / "badges").glob("*.png"))), 6)
+            self.assertTrue((output/'badges/tube360-medal.svg').is_file())
+            self.assertFalse(any((output/'badges').glob('sample-*-medal.*')))
             self.assertFalse((output / "badges/sample-community.svg").exists())
             index = (output / "README.md").read_text()
             self.assertLess(index.index("## Revive360 Project"), index.index("## Reviewed"))

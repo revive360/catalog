@@ -55,3 +55,17 @@ Review is not a complete audit or warranty. Software is as is under its license.
 ```
 
 [Back to catalog](../README.md)
+
+## Project medal for the top of a README
+
+![Revive360 Project medal](../badges/tube360-medal.svg)
+
+```markdown
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+```
+
+PNG alternative:
+
+```markdown
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.png)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+```
