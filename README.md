@@ -1,6 +1,6 @@
 # Revive360 catalog
 
-Source of truth for app levels, version-bound external reviews and revocations. Local Python tooling produces a schema-validated record per app, SVG badges, README snippets and an offline HTML index. Nothing pushes, publishes, contacts an app, queries a console or runs on GitHub by itself.
+Source of truth for app levels, version-bound external reviews and revocations. Local Python tooling produces a schema-validated record per app, compact SVG/PNG badges, an exclusive Project medal, README snippets and an offline HTML index. Nothing pushes, publishes, contacts an app, queries a console or runs on GitHub by itself.
 
 **All included records are demonstrations, including Tube360 Project.** Tube360's actual repository is still [`PedroHenrique0713/tube360`](https://github.com/PedroHenrique0713/tube360); its sample targets the future `revive360/tube360` repository. No transfer, review, real-console acceptance or signed org release is asserted. Sample commits, versions, hashes and `.invalid` evidence URLs are synthetic and never usable certificates. Other app names/accounts are fictional examples.
 
@@ -25,6 +25,8 @@ python3 -m venv .venv
 
 Open [generated/index.html](generated/index.html), [the catalog index](generated/README.md) or [README snippets](generated/snippets.md). The committed snapshot uses a fixed date so it is reproducible. For operational refresh use `.venv/bin/python -m catalog.build` (today), never the fixture date. `--data` and `--output` select separate directories; generation validates every record before replacing generated files and removes stale badges. Output must be empty or carry the generator's `.catalog-generated` marker; unrelated directories are refused.
 
+README badges use two parts: mascot + **Revive360**, then **Project**, **Reviewed vX.Y.Z** or **Revoked**. Project has the strongest dark/neon-green treatment and is the only level with a circular cartoon medal. Reviewed is muted; unreviewed updates and expired reviews keep the reviewed version text in gray, while revocation is red. Accessible SVG titles retain the full state; the linked record gives the explanation. **No SVG/PNG includes a demo label**; the local preview shows it outside the image. PNGs use pinned `resvg-py` with the bundled licensed font and no system-font lookup. See [asset provenance](assets/README.md).
+
 `data/apps/<id>.json` is validated using Draft 2020-12 [JSON Schema](schema/app.schema.json), date/URI format checking and semantic rules. For reviewed entries the generator derives status from current version/source/hash, expiry and revocation. Status cannot be set to valid by an author-supplied string. Reviewers and evidence still need **human approval**: local schema validation cannot prove source/binary correspondence, actual repository ownership, console testing or attestation validity. For real records set `example: false` only after reviewing actual evidence; illustrated console results and `.invalid` evidence are rejected.
 
 ## Maintaining trust
@@ -45,6 +47,6 @@ With sibling `.github` and `devkit` checkouts:
 
 It embeds the current profile in all three languages, every first-party Markdown document from all three repositories, records and rendered badges, including the original mascot. No CDN/font/image requests. The separate generated catalog index remains usable independently. Large upstream license texts are linked as repository sources rather than reproduced as owner policy.
 
-**Risk/privacy:** Homebrew can cause Xbox Live bans, data loss or console damage. No collection without opt-in; login/tokens stay on the console. Third-party terms risk is the author's; no DRM/paywall bypass. Use private vulnerability reporting and issues/Discussions until `CONTACT_DECEMBER_2026_TODO` is replaced with confirmed email/domain in December.
+**Risk/privacy:** Homebrew can cause Xbox Live bans, data loss or console damage. No collection without opt-in; login/tokens stay on the console. Third-party terms risk is the author's; no DRM/paywall bypass. Use private vulnerability reporting and [official Discussions](https://github.com/orgs/revive360/discussions) until `CONTACT_DECEMBER_2026_TODO` is replaced with confirmed email/domain in December.
 
 Code/docs are MIT; branding and upstream notices retain their separate rights. [GitHub setup checklist](https://github.com/revive360/.github/blob/main/SETUP.md) and [Free CI plan](https://github.com/revive360/.github/blob/main/CI.md).

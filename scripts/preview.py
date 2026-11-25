@@ -12,7 +12,7 @@ from urllib.parse import unquote, urlsplit
 import markdown
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from catalog.build import ROOT, COMMUNITY_WARNING, LABELS, STATES, badge_svg, effective_status, load_records
+from catalog.build import ROOT, COMMUNITY_WARNING, LABELS, STATES, badge_svg, project_medal_svg, effective_status, load_records
 
 # Console-shell silver, forest green and blue review ink. Left-aligned reading
 # layout, original mascot as the single visual focal point; no remote fonts.
@@ -31,6 +31,19 @@ function revealHash(){const el=document.getElementById(decodeURIComponent(locati
 addEventListener('hashchange',revealHash);if(location.hash)revealHash();
 let printState=[];addEventListener('beforeprint',()=>{printState=docs.map(d=>d.open);docs.forEach(d=>d.open=true)});addEventListener('afterprint',()=>docs.forEach((d,i)=>d.open=printState[i]));
 """
+
+# Let the neon Project medal carry the visual emphasis; other levels stay quiet.
+STYLE += """
+.badge-showcase{display:grid;grid-template-columns:340px 1fr;gap:38px;align-items:start}.medal-demo{margin:0;padding:22px;background:#14200f;border:3px solid #080c07;border-radius:25px;color:#e5f4de;text-align:center}.medal-demo svg{display:block;width:100%;height:auto}.medal-demo a{color:#c2ff8a}.medal-demo figcaption{font-size:15px}.badge-samples{display:grid;gap:16px}.badge-sample{padding:9px 0;border-bottom:1px solid var(--line)}.badge-sample p{margin:0 0 8px;font-size:14px}.badge-sample svg{display:block;max-width:100%;height:auto}.demo-tag{display:inline-block;margin:6px 0;font-size:12px;font-weight:700;color:#65440c;background:#fff0bf;padding:2px 8px;border-radius:4px}
+@media screen and (max-width:760px){.badge-showcase{grid-template-columns:1fr;gap:25px}.medal-demo{max-width:340px}.badge-samples{gap:10px}}@media print{.badge-showcase{grid-template-columns:230px 1fr}}
+"""
+
+
+def namespace_svg(svg: str, prefix: str) -> str:
+    ids = re.findall(r'\bid="([^"]+)"', svg)
+    for original in ids:
+        svg = svg.replace(f'id="{original}"', f'id="{prefix}-{original}"').replace(f'url(#{original})', f'url(#{prefix}-{original})')
+    return svg
 
 
 def document_id(path: Path, workspace: Path) -> str:
@@ -78,9 +91,8 @@ def render_document(path: Path, ids: dict[Path, str]) -> str:
             return f'<img alt="Revive360" src="data:image/jpeg;base64,{encoded}">'
         return match.group(0)
     body = re.sub(r'<img[^>]*src="([^"]+)"[^>]*>', local_image, body)
-    # Each embedded SVG gets its own clip ID to avoid collisions.
-    unique = ids[path]
-    body = body.replace('id="mascot"', f'id="mascot-{unique}"').replace('url(#mascot)', f'url(#mascot-{unique})')
+    # Each embedded record has distinct clip IDs across gallery/cards/documents.
+    body = namespace_svg(body, ids[path])
     return body
 
 
@@ -92,7 +104,7 @@ def generate(output: Path, today: date) -> int:
     avatar = base64.b64encode((ROOT / 'assets/mascot.jpg').read_bytes()).decode()
     html = ['<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revive360 · prévia R2</title><style>' + STYLE + '</style></head><body>',
             '<p class="notice">Prévia local R2 · 25 de novembro de 2026 · Nenhuma publicação ou configuração do GitHub foi executada.</p><main>',
-            '<header class="masthead"><div class="wordmark">Revive360</div><nav aria-label="Seções"><a href="#niveis">Três níveis</a><a href="#catalogo">Catálogo</a><a href="#perfil">Perfil</a><a href="#documentos">Documentos</a></nav></header>',
+            '<header class="masthead"><div class="wordmark">Revive360</div><nav aria-label="Seções"><a href="#niveis">Três níveis</a><a href="#selos">Selos</a><a href="#catalogo">Catálogo</a><a href="#perfil">Perfil</a><a href="#documentos">Documentos</a></nav></header>',
             '<div class="hero"><div><span class="power">Software aberto. Console de verdade.</span><h1>Uma nova vida<br>para o seu 360.</h1><p>Apps novos para um console de vinte anos. Código aberto, origem conferida e regras claras sobre o que cada selo significa.</p><p class="sub">Organização: <a href="https://github.com/revive360">github.com/revive360</a><br>Fundador e único dono hoje: Pedro.</p></div>',
             f'<img class="avatar" src="data:image/jpeg;base64,{avatar}" alt="Mascote original Revive360, um console com controle e uma xícara"></div>',
             '<section id="niveis"><h2>Três níveis. Três compromissos.</h2><p class="lead">A ficha no catálogo é a fonte da verdade. Ser membro não é selo. Uma imagem copiada não substitui a conferência do link, da versão e do hash.</p>',
@@ -101,7 +113,17 @@ def generate(output: Path, today: date) -> int:
             '<div class="level community"><h3><span class="mark">Community list</span></h3><div><p>Descoberta para manter a comunidade viva. Sem selo; pode sair a qualquer momento.</p><p class="warning">Não verificado pela Revive360, não é recomendação, use por sua conta e risco.</p></div></div>',
             '<div class="quick"><div><b>48 horas</b><p>Resposta a segurança em qualquer nível. Revogação imediata se grave.</p></div><div><b>CI automático</b><p>Release Project após revisão e teste do binário exato em console real.</p></div><div><b>14 dias</b><p>Alvo da fila externa, por chegada. Community entra quando der.</p></div></div>',
             '<p>Revisão não é auditoria completa nem garantia. Software fornecido como está, pela licença. Ninguém revisa o próprio app, exceto o fundador Pedro, inclusive no nível máximo, com a exceção registrada.</p></section>',
-            '<section id="catalogo"><h2>Catálogo e selos verificáveis</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> Tube360 continua na conta do autor. Seu exemplo Project mostra um futuro repo na org; não afirma transferência, teste físico ou revisão concluída. Os outros apps e as evidências são fictícios.</p>']
+            '<section id="selos"><h2>Um selo curto. Uma ficha completa.</h2><p class="lead">Project ganha a medalha com o mascote e verde neon. Os demais ficam no selo de linha. Cinza indica versão atual sem revisão ou selo expirado; vermelho indica revogação. Os detalhes e o estado acessível ficam na ficha.</p><p><span class="demo-tag">Demo only · exemplos locais</span> Esta indicação fica na prévia, fora das imagens de README.</p><div class="badge-showcase">']
+    project = next(r for r in records if r['tier'] == 'project')
+    project_target = ids[(ROOT / 'generated/apps' / (project['id']+'.md')).resolve()]
+    medal_svg = namespace_svg(project_medal_svg(project,today), 'showcase')
+    medal_png = base64.b64encode((ROOT/'generated/badges'/f'{project["id"]}-medal.png').read_bytes()).decode()
+    html += [f'<figure class="medal-demo"><a href="#{project_target}">{medal_svg}</a><figcaption>Medalha exclusiva Project<br><a download="{project["id"]}-medal.png" href="data:image/png;base64,{medal_png}">Baixar PNG</a> · <a href="#{project_target}">Markdown de uso</a></figcaption></figure><div class="badge-samples">']
+    by_id = {r['id']:r for r in records}
+    for slug,label in [('tube360','Project · verde neon'),('sample-reviewed','Reviewed · versão revisada'),('sample-unreviewed','Versão atual não revisada · cinza'),('sample-revoked','Revoked · vermelho'),('sample-expired','Expirado · cinza')]:
+        r=by_id[slug]; target=ids[(ROOT/'generated/apps'/f'{slug}.md').resolve()]
+        html += [f'<div class="badge-sample"><p>{label}</p><a href="#{target}" aria-label="Conferir {escape(label,quote=True)}">{namespace_svg(badge_svg(r,today),"showcase")}</a></div>']
+    html += ['</div></div></section><section id="catalogo"><h2>Catálogo e selos verificáveis</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> Tube360 continua na conta do autor. Seu exemplo Project mostra um futuro repo na org; não afirma transferência, teste físico ou revisão concluída. Os outros apps e as evidências são fictícios.</p>']
     for tier in ('project', 'reviewed', 'community'):
         html += [f'<div class="catalog-group"><h3>{LABELS[tier]}</h3>']
         for r in records:
@@ -109,7 +131,7 @@ def generate(output: Path, today: date) -> int:
                 continue
             target = ids[(ROOT / 'generated/apps' / (r['id'] + '.md')).resolve()]
             badge = badge_svg(r, today) or '<p class="warning">Não verificado pela Revive360, não é recomendação, use por sua conta e risco.</p>'
-            badge = badge.replace('id="mascot"', 'id="mascot-card"').replace('url(#mascot)', 'url(#mascot-card)')
+            badge = namespace_svg(badge, 'card')
             html += [f'<article class="app"><div><h3><a href="#{target}">{escape(r["name"])}</a></h3><p>{escape(r["summary"])}</p><p class="status">{STATES[effective_status(r,today)]} <span class="sample">· Exemplo</span></p><p><a href="#{target}">Conferir ficha, hash e escopo</a></p></div><a href="#{target}" aria-label="Conferir ficha de {escape(r["name"],quote=True)}">{badge}</a></article>']
         html += ['</div>']
     html += ['</section><section id="perfil"><h2>Perfil público da organização</h2><p class="lead">EN primeiro, com versões em português e espanhol. Os três perfis mantêm as seis regras, os níveis e os limites de responsabilidade.</p>']
@@ -130,7 +152,7 @@ def generate(output: Path, today: date) -> int:
             continue
         label = str(path.relative_to(workspace))
         html += [f'<details class="document" data-label="{escape(label.lower(),quote=True)}" id="{ids[path]}"><summary>{escape(label)}</summary><div class="prose">{render_document(path,ids)}</div></details>']
-    html += ['</section><footer><p><strong>Risco ao usuário:</strong> homebrew pode causar banimento no Xbox Live, perda de dados ou dano ao console. Nada de coleta sem opt-in; login e tokens ficam no console. Nenhum bypass de DRM/paywall. Risco dos termos de terceiros é do autor.</p><p>A org não recebe nem divide doações. Até dezembro, segurança por private vulnerability reporting; público por issues/Discussions. <code>CONTACT_DECEMBER_2026_TODO</code>.</p><p>Créditos: xenosworks (xsdk, vulkan4xenon, SDL-xenon), Free60/libxenon. Xbox e Xbox 360 são marcas da Microsoft. Revive360 é independente, sem endosso da Microsoft ou Google.</p><p class="print-note">Arquivo único, sem dependências de rede. A impressão abre os documentos para incluir o conteúdo.</p></footer></main><script>' + SCRIPT + '</script></body></html>']
+    html += ['</section><footer><p><strong>Risco ao usuário:</strong> homebrew pode causar banimento no Xbox Live, perda de dados ou dano ao console. Nada de coleta sem opt-in; login e tokens ficam no console. Nenhum bypass de DRM/paywall. Risco dos termos de terceiros é do autor.</p><p>A org não recebe nem divide doações. Até dezembro, segurança por private vulnerability reporting; comunidade em <a href="https://github.com/orgs/revive360/discussions">Discussions oficiais</a>. <code>CONTACT_DECEMBER_2026_TODO</code>.</p><p>Créditos: xenosworks (xsdk, vulkan4xenon, SDL-xenon), Free60/libxenon. Xbox e Xbox 360 são marcas da Microsoft. Revive360 é independente, sem endosso da Microsoft ou Google.</p><p class="print-note">Arquivo único, sem dependências de rede. A impressão abre os documentos para incluir o conteúdo.</p></footer></main><script>' + SCRIPT + '</script></body></html>']
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(''.join(html))
     return len(documents)
