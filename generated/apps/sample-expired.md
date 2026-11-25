@@ -6,7 +6,7 @@ Status calculated on **2026-11-25** from the recorded data; not live upstream mo
 
 > **DEMONSTRATION ONLY — not a certification.** Fictional demonstration\. No application, tested binary, real author or actual review is claimed; all evidence is synthetic\.
 
-![Reviewed](../badges/sample-expired.svg)
+![Revive360 Expired](../badges/sample-expired.svg)
 
 Fictional external app illustrating catalog states\.
 
@@ -55,7 +55,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 ## README snippet
 
 ```markdown
-[![Reviewed · v1.2.3](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-expired.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-expired.md)
+[![Revive360 Expired](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-expired.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-expired.md)
 ```
 
 [Back to catalog](../README.md)

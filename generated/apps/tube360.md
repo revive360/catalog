@@ -6,7 +6,7 @@ Status calculated on **2026-11-25** from the recorded data; not live upstream mo
 
 > **DEMONSTRATION ONLY — not a certification.** Demonstration only\. Actual repository remains https://github\.com/PedroHenrique0713/tube360\. No transfer, review, real\-console test or signed CI release is claimed\. Version, commits, hashes and evidence are synthetic\.
 
-![Revive360 Project](../badges/tube360.svg)
+![Revive360 Official](../badges/tube360.svg)
 
 Native YouTube app for Xbox 360\. Project badge layout demonstration\.
 
@@ -51,7 +51,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 ## README snippet
 
 ```markdown
-[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
 ```
 
 [Back to catalog](../README.md)

@@ -10,7 +10,7 @@ from jsonschema import ValidationError
 from PIL import Image
 from catalog.build import (ROOT, COMMUNITY_WARNING, badge_svg, effective_status,
                            load_records, project_medal_svg, record_markdown, render, snippet, validate_record)
-from catalog.badges import png, NEON, GRAY
+from catalog.badges import png, NEON, PALETTES
 
 TODAY = date(2026, 11, 25)
 
@@ -95,7 +95,7 @@ class CatalogTests(unittest.TestCase):
             with self.subTest(key=key):
                 validate_record(r, TODAY)
                 self.assertEqual(effective_status(r, TODAY), "current_unreviewed")
-                self.assertIn("Reviewed v1.2.3", badge_svg(r, TODAY))
+                self.assertIn("Outdated v1.2.3", badge_svg(r, TODAY))
                 self.assertIn("Current version not reviewed", record_markdown(r, TODAY))
 
     def test_expiry_inclusive_boundary_and_revocation_precedence(self):
@@ -141,8 +141,8 @@ class CatalogTests(unittest.TestCase):
                 self.assertIn("No org update channel", text)
 
     def test_readme_badges_are_short_and_do_not_contain_demo_labels(self):
-        labels = {"tube360": "Project", "sample-reviewed": "Reviewed v1.2.3",
-                  "sample-unreviewed": "Reviewed v1.2.3", "sample-expired": "Reviewed v1.2.3",
+        labels = {"tube360": "Official", "sample-reviewed": "Reviewed v1.2.3",
+                  "sample-unreviewed": "Outdated v1.2.3", "sample-expired": "Expired",
                   "sample-revoked": "Revoked"}
         for slug,label in labels.items():
             with self.subTest(slug=slug):
@@ -153,9 +153,51 @@ class CatalogTests(unittest.TestCase):
                 self.assertNotIn('Demo',svg)
                 self.assertEqual(tree.attrib['height'],'36')
                 self.assertIn('data:image/jpeg;base64,',svg)
-        for slug in ('sample-unreviewed','sample-expired'):
-            self.assertIn(GRAY,badge_svg(fixture(slug),TODAY))
+        for slug,kind in [('sample-unreviewed','outdated'),('sample-expired','expired')]:
+            self.assertIn(PALETTES[kind]['border'],badge_svg(fixture(slug),TODAY))
         self.assertIn(NEON,badge_svg(fixture('tube360'),TODAY))
+
+    def test_every_state_has_a_distinct_vector_icon_word_and_color(self):
+        shapes,colors,words=set(),set(),set()
+        ns={'s':'http://www.w3.org/2000/svg'}
+        for slug,kind in [('tube360','official'),('sample-reviewed','reviewed'),('sample-unreviewed','outdated'),('sample-expired','expired'),('sample-revoked','revoked')]:
+            with self.subTest(slug=slug):
+                tree=ElementTree.fromstring(badge_svg(fixture(slug),TODAY))
+                icon=tree.find(f'.//s:g[@data-icon="{kind}"]',ns)
+                self.assertIsNotNone(icon)
+                paths=tuple(path.attrib['d'] for path in icon.findall('s:path',ns))
+                self.assertTrue(paths)
+                self.assertEqual(icon.findall('.//s:text',ns),[])
+                shapes.add(paths)
+                colors.add(PALETTES[kind]['right'])
+                words.add(tree.findall('.//s:text',ns)[-1].text.split()[0])
+        self.assertEqual((len(shapes),len(colors),len(words)),(5,5,5))
+        official=badge_svg(fixture('tube360'),TODAY)
+        self.assertIn('feGaussianBlur',official)
+        self.assertIn('highest level, continuous',official)
+        self.assertNotIn('feGaussianBlur',badge_svg(fixture(),TODAY))
+
+    def test_badge_text_contrast_on_both_opaque_panels(self):
+        def luminance(color):
+            rgb=[int(color[i:i+2],16)/255 for i in (1,3,5)]
+            linear=[v/12.92 if v<=0.04045 else ((v+0.055)/1.055)**2.4 for v in rgb]
+            return sum(v*w for v,w in zip(linear,(0.2126,0.7152,0.0722)))
+        ns={'s':'http://www.w3.org/2000/svg'}
+        for slug in ('tube360','sample-reviewed','sample-unreviewed','sample-expired','sample-revoked'):
+            tree=ElementTree.fromstring(badge_svg(fixture(slug),TODAY))
+            foreground=tree.find('.//s:g[@font-family]',ns).attrib['fill']
+            panels=tree.findall('.//s:g[@clip-path]/s:path',ns)[:2]
+            self.assertEqual(len(panels),2)
+            for panel in panels:
+                with self.subTest(slug=slug,panel=panel.attrib['fill']):
+                    a,b=sorted([luminance(foreground),luminance(panel.attrib['fill'])])
+                    self.assertGreaterEqual((b+0.05)/(a+0.05),4.5)
+
+    def test_snippet_alts_follow_states_and_the_requested_snapshot_date(self):
+        for slug,word in [('tube360','Official'),('sample-reviewed','Reviewed v1.2.3'),('sample-unreviewed','Outdated v1.2.3'),('sample-expired','Expired'),('sample-revoked','Revoked')]:
+            self.assertIn(f'[![Revive360 {word}]',snippet(fixture(slug),as_of=TODAY))
+        self.assertIn('[![Revive360 Expired]',snippet(fixture(),as_of=date(2027,3,9)))
+        self.assertIn('[![Revive360 Project]',snippet(fixture('tube360'),medal=True,as_of=TODAY))
 
     def test_medal_is_project_only_and_revocation_overrides_green(self):
         for slug in ('sample-reviewed','sample-unreviewed','sample-revoked','sample-expired','sample-community'):
@@ -173,7 +215,7 @@ class CatalogTests(unittest.TestCase):
     def test_pngs_render_at_twice_svg_size_with_transparent_medal_corners(self):
         badge=badge_svg(fixture('tube360'),TODAY)
         rendered=Image.open(io.BytesIO(png(badge)))
-        self.assertEqual(rendered.size,(418,72))
+        self.assertEqual(rendered.size,(474,72))
         image=Image.open(io.BytesIO(png(project_medal_svg(fixture('tube360'),TODAY))))
         self.assertEqual(image.size,(1024,1024))
         self.assertEqual(image.getpixel((0,0))[3],0)

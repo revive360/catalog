@@ -17,7 +17,7 @@ from urllib.parse import urlsplit
 from jsonschema import Draft202012Validator, FormatChecker, ValidationError
 import markdown
 
-from catalog.badges import compact, medal, png
+from catalog.badges import compact, compact_label, medal, png
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORD_BASE = "https://github.com/revive360/catalog/blob/main/generated/apps"
@@ -119,16 +119,14 @@ def project_medal_svg(record: dict, today: date) -> str | None:
     return medal(record, state, STATES[state])
 
 
-def snippet(record: dict, *, medal=False, extension="svg") -> str:
+def snippet(record: dict, *, medal=False, extension="svg", as_of: date | None = None) -> str:
     if record["tier"] == "community":
         return "No badge for Community list."
     if medal and record["tier"] != "project":
         raise ValueError("Only Project has a medal")
     if extension not in ("svg", "png"):
         raise ValueError("Badge format must be svg or png")
-    label = LABELS[record["tier"]]
-    if record["tier"] == "reviewed":
-        label += " · " + record["review"]["release"]["version"]
+    label = "Revive360 Project" if medal else "Revive360 " + compact_label(record, effective_status(record, as_of or date.today()))[1]
     suffix = "-medal" if medal else ""
     return f'[![{label}]({IMAGE_BASE}/{record["id"]}{suffix}.{extension})]({RECORD_BASE}/{record["id"]}.md)'
 
@@ -142,7 +140,8 @@ def record_markdown(record: dict, today: date) -> str:
     if record["tier"] == "community":
         parts += ['**' + COMMUNITY_WARNING + '**']
     else:
-        parts += [f'![{LABELS[record["tier"]]}](../badges/{record["id"]}.svg)']
+        badge_label = compact_label(record,state)[1]
+        parts += [f'![Revive360 {badge_label}](../badges/{record["id"]}.svg)']
     parts += [md(record["summary"]), f'Repository: {record["repository"]}',
               f'Owner: {md(record["owner"])}. License: {md(record["license"])}. Membership is not a badge.']
     if "review" in record:
@@ -172,13 +171,13 @@ def record_markdown(record: dict, today: date) -> str:
     parts += ['## Scope and user risk',
               'Review is not a complete audit or warranty. Software is as is under its license. Homebrew risks Xbox Live bans, data loss and console damage. No collection without opt-in; login/tokens stay on the console. No DRM/paywall bypass. Third-party terms risk belongs to the author.',
               '[Review policy, checklist, response priorities and limits](https://github.com/revive360/.github/blob/main/REVIEW.md). Security response: 48 hours; severe findings revoke immediately. External review queue: FIFO, 14-day target.',
-              '## README snippet', '```markdown\n' + snippet(record) + '\n```',
+              '## README snippet', '```markdown\n' + snippet(record,as_of=today) + '\n```',
               '[Back to catalog](../README.md)']
     if record["tier"] == "project":
         parts += ['## Project medal for the top of a README',
                   f'![Revive360 Project medal](../badges/{record["id"]}-medal.svg)',
-                  '```markdown\n' + snippet(record, medal=True) + '\n```',
-                  'PNG alternative:\n\n```markdown\n' + snippet(record, medal=True, extension="png") + '\n```']
+                  '```markdown\n' + snippet(record, medal=True,as_of=today) + '\n```',
+                  'PNG alternative:\n\n```markdown\n' + snippet(record, medal=True, extension="png",as_of=today) + '\n```']
     return '\n\n'.join(parts) + '\n'
 
 
@@ -247,12 +246,12 @@ def render(data_dir: Path, output: Path, today: date) -> list[dict]:
         (staging / "README.md").write_text('\n\n'.join(index) + '\n')
         snippets = ['# README badge snippets', 'Examples link to demonstration records. SVG assets contain no demo label; inspect the linked record before use.']
         for rec in records:
-            snippets += [f'## {rec["id"]}', 'Compact SVG:\n\n```markdown\n' + snippet(rec) + '\n```']
+            snippets += [f'## {rec["id"]}', 'Compact SVG:\n\n```markdown\n' + snippet(rec,as_of=today) + '\n```']
             if rec["tier"] != "community":
-                snippets += ['Compact PNG:\n\n```markdown\n' + snippet(rec, extension="png") + '\n```']
+                snippets += ['Compact PNG:\n\n```markdown\n' + snippet(rec, extension="png",as_of=today) + '\n```']
             if rec["tier"] == "project":
                 for ext in ("svg", "png"):
-                    snippets += [f'Project medal ({ext.upper()}):\n\n```markdown\n' + snippet(rec, medal=True, extension=ext) + '\n```']
+                    snippets += [f'Project medal ({ext.upper()}):\n\n```markdown\n' + snippet(rec, medal=True, extension=ext,as_of=today) + '\n```']
         (staging / "snippets.md").write_text('\n\n'.join(snippets) + '\n')
         style = 'body{font:17px/1.65 system-ui,sans-serif;max-width:1000px;margin:32px auto;padding:0 20px;color:#20342c;background:#f5f7f7}article{border-top:2px solid #c7d2cd;padding:24px 0}svg{max-width:100%;height:auto}pre{overflow:auto;padding:16px;background:#e4eae7}a{color:#185d99}blockquote{border-left:5px solid #8d3e15;padding-left:20px}code{overflow-wrap:anywhere}h1,h2,h3{line-height:1.2}'
         (staging / "index.html").write_text('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revive360 catalog</title><style>' + style + '</style><body id="top"><h1>Revive360 catalog</h1><p><strong>' + notice + '</strong></p>' + ''.join(sections) + '</body></html>')

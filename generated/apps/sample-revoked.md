@@ -6,7 +6,7 @@ Status calculated on **2026-11-25** from the recorded data; not live upstream mo
 
 > **DEMONSTRATION ONLY — not a certification.** Fictional demonstration\. No application, tested binary, real author or actual review is claimed; all evidence is synthetic\.
 
-![Reviewed](../badges/sample-revoked.svg)
+![Revive360 Revoked](../badges/sample-revoked.svg)
 
 Fictional external app illustrating catalog states\.
 
@@ -59,7 +59,7 @@ Review is not a complete audit or warranty. Software is as is under its license.
 ## README snippet
 
 ```markdown
-[![Reviewed · v1.2.3](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-revoked.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-revoked.md)
+[![Revive360 Revoked](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-revoked.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-revoked.md)
 ```
 
 [Back to catalog](../README.md)

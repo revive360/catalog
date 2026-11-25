@@ -17,6 +17,43 @@ RED = "#ff695e"
 GRAY = "#bbc1c5"
 FONT = "Droid Sans,Arial,sans-serif"
 
+# Each state has its own word, vector icon and palette. All type is drawn on
+# opaque fills, so README themes cannot change the text/background contrast.
+PALETTES = {
+    "official": {"border": NEON, "left": "#11170f", "right": "#203c12", "ink": NEON},
+    "reviewed": {"border": "#459e9b", "left": "#182b2d", "right": "#135458", "ink": "#d4fff8"},
+    "outdated": {"border": "#e1aa3a", "left": "#2d2517", "right": "#664512", "ink": "#ffe6a9"},
+    "expired": {"border": "#9aa4ad", "left": "#2b3035", "right": "#4b5158", "ink": "#e6e9ed"},
+    "revoked": {"border": "#fb7b70", "left": "#321d1d", "right": "#8c2925", "ink": "#ffe7e2"},
+}
+
+
+def compact_label(record: dict, state: str) -> tuple[str, str]:
+    if state == "revoked":
+        return "revoked", "Revoked"
+    if state == "expired":
+        return "expired", "Expired"
+    if state == "current_unreviewed":
+        return "outdated", "Outdated " + record["review"]["release"]["version"]
+    if record["tier"] == "project":
+        return "official", "Official"
+    return "reviewed", "Reviewed " + record["review"]["release"]["version"]
+
+
+def state_icon(kind: str, x: float, ink: str, background: str) -> str:
+    paths = {
+        "official": '<path d="M0-9l2.8 5.7 6.3.9-4.6 4.5 1.1 6.3L0 4.4l-5.6 3 1.1-6.3-4.6-4.5 6.3-.9z"/>',
+        "reviewed": '<path d="M-7 0l4.5 4.5L7-6" fill="none" stroke-width="2.8"/>',
+        "outdated": '<path d="M0-9L9 7H-9z" stroke-width="1.3"/>'
+                    f'<path d="M0-3v4" stroke="{background}" stroke-width="2"/>'
+                    f'<circle cx="0" cy="4" r="1" fill="{background}" stroke="none"/>',
+        "expired": '<path d="M-6-8H6M-6 8H6M-5-8v4l10 8v4M5-8v4L-5 4v4" fill="none" stroke-width="1.8"/>',
+        "revoked": '<path d="M-6-6L6 6M6-6L-6 6" fill="none" stroke-width="2.8"/>',
+    }
+    return (f'<g data-icon="{kind}" aria-hidden="true" transform="translate({x:g} 18)" '
+            f'fill="{ink}" stroke="{ink}" stroke-linecap="round" stroke-linejoin="round">'
+            + paths[kind] + '</g>')
+
 
 @lru_cache(maxsize=3)
 def bitmap(name: str) -> str:
@@ -26,37 +63,36 @@ def bitmap(name: str) -> str:
 def compact(record: dict, state: str, state_label: str) -> str | None:
     if record["tier"] == "community":
         return None
-    project = record["tier"] == "project"
-    label = "Project" if project else "Reviewed " + record["review"]["release"]["version"]
-    if state == "revoked":
-        label = "Revoked"
-    if state == "valid" and project:
-        border, left, right, ink = NEON, "#11170f", "#243d17", NEON
-    elif state == "valid":
-        border, left, right, ink = "#75898c", "#242b2e", "#4e6268", "#e7edef"
-    elif state == "revoked":
-        border, left, right, ink = RED, "#271b1b", "#7a2927", "#fff1ed"
-    else:
-        border, left, right, ink = GRAY, "#303437", "#565d61", "#e2e5e7"
+    kind, label = compact_label(record, state)
+    palette = PALETTES[kind]
+    border, left, right, ink = (palette[key] for key in ("border", "left", "right", "ink"))
     left_width = 125
-    right_width = max(84, len(label) * 8 + 24)
+    right_width = max(106, len(label) * 8 + 48)
     width = left_width + right_width
-    mascot = bitmap("mascot-small.jpg" if project and state == "valid" else "mascot-muted.jpg")
-    accessible = escape(f'Revive360 {label}: {state_label}; {record["name"]}', quote=True)
+    official = kind == "official"
+    mascot = bitmap("mascot-small.jpg" if official else "mascot-muted.jpg")
+    scope = "Revive360 Project, highest level, continuous while compliant; " if official else ""
+    accessible = escape(f'Revive360 {label}: {scope}{state_label}; {record["name"]}', quote=True)
     clip_id = "badge-clip-" + record["id"]
+    glow_id = "badge-glow-" + record["id"]
+    glow_definition = (f'<filter id="{glow_id}" x="-15%" y="-60%" width="130%" height="220%">'
+                       '<feGaussianBlur stdDeviation="1.3"/></filter>') if official else ""
+    glow = (f'<rect x="2" y="2" width="{width-4}" height="32" rx="7" fill="none" '
+            f'stroke="{NEON}" stroke-width="4" opacity=".85" filter="url(#{glow_id})"/>') if official else ""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
         f'width="{width}" height="36" viewBox="0 0 {width} 36" role="img" aria-label="{accessible}" data-state="{state}">'
-        f'<title>{accessible}</title><defs><clipPath id="{clip_id}"><rect x="2" y="2" width="{width-4}" height="32" rx="6"/></clipPath></defs>'
+        f'<title>{accessible}</title><defs>{glow_definition}<clipPath id="{clip_id}"><rect x="2" y="2" width="{width-4}" height="32" rx="6"/></clipPath></defs>{glow}'
         f'<rect x="1" y="1" width="{width-2}" height="34" rx="8" fill="#080b08" stroke="#080b08" stroke-width="2"/>'
         f'<g clip-path="url(#{clip_id})"><path fill="{left}" d="M2 2h{left_width-2}v32H2z"/>'
         f'<path fill="{right}" d="M{left_width} 2h{right_width}v32H{left_width}z"/>'
         f'<image xlink:href="{mascot}" x="5" y="5" width="26" height="26"/>'
         f'<path d="M{left_width} 2v32" stroke="#080b08" stroke-width="2"/></g>'
+        + state_icon(kind, left_width+17, ink, right) +
         f'<g font-family="{FONT}" font-weight="700" fill="{ink}">'
         '<text x="37" y="23" font-size="14">Revive360</text>'
-        f'<text x="{left_width+right_width/2:g}" y="23" text-anchor="middle" font-size="14">{escape(label)}</text></g>'
-        f'<rect x="1.5" y="1.5" width="{width-3}" height="33" rx="7" fill="none" stroke="{border}" stroke-width="2"/></svg>\n'
+        f'<text x="{left_width+34}" y="23" font-size="14">{escape(label)}</text></g>'
+        f'<rect x="1.5" y="1.5" width="{width-3}" height="33" rx="7" fill="none" stroke="{border}" stroke-width="{2.8 if official else 1.8}"/></svg>\n'
     )
 
 
