@@ -10,7 +10,7 @@ Status is based on manually maintained data. Membership alone is not a badge.
 
 ## Revive360 Project
 
-- [Tube360](apps/tube360.md) — Valid; demonstration only
+- [Sample Project app](apps/sample-project.md) — Valid; demonstration only
 
 ## Reviewed
 

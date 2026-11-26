@@ -39,10 +39,10 @@ class CatalogTests(unittest.TestCase):
         r = fixture(); r["review"].update(reviewer=r["owner"], self_review_exception=True)
         with self.assertRaisesRegex(ValueError, "Only founder"):
             validate_record(r, TODAY)
-        validate_record(fixture("tube360"), TODAY)
+        validate_record(fixture("sample-project"), TODAY)
 
     def test_self_review_exception_cannot_be_hidden_or_fabricated(self):
-        for slug, flag in [("tube360", False), ("sample-reviewed", True)]:
+        for slug, flag in [("sample-project", False), ("sample-reviewed", True)]:
             with self.subTest(slug=slug), self.assertRaisesRegex(ValueError, "explicitly"):
                 r = fixture(slug); r["review"]["self_review_exception"] = flag
                 validate_record(r, TODAY)
@@ -53,10 +53,10 @@ class CatalogTests(unittest.TestCase):
                          lambda r: r["review"].update(builder="author"),
                          lambda r: r["review"].update(expires_on="2027-01-01")):
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):
-                r = fixture("tube360"); mutation(r); validate_record(r, TODAY)
+                r = fixture("sample-project"); mutation(r); validate_record(r, TODAY)
 
     def test_project_cannot_claim_unreviewed_published_binary(self):
-        r = fixture("tube360"); r["current"]["sha256"] = "a" * 64
+        r = fixture("sample-project"); r["current"]["sha256"] = "a" * 64
         with self.assertRaisesRegex(ValueError, "match"):
             validate_record(r, TODAY)
 
@@ -69,7 +69,7 @@ class CatalogTests(unittest.TestCase):
                 r = fixture(); mutation(r); validate_record(r, TODAY)
 
     def test_real_certification_cannot_use_illustrated_console_evidence(self):
-        r = fixture("tube360"); r["example"] = False
+        r = fixture("sample-project"); r["example"] = False
         with self.assertRaisesRegex(ValueError, "real-console"):
             validate_record(r, TODAY)
         r["review"]["console"]["result"] = "passed"
@@ -108,7 +108,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(effective_status(r, expiry), "revoked")
 
     def test_project_continuous_validity(self):
-        self.assertEqual(effective_status(fixture("tube360"), date(2036, 11, 25)), "valid")
+        self.assertEqual(effective_status(fixture("sample-project"), date(2036, 11, 25)), "valid")
 
     def test_community_has_warning_and_never_badge_or_review(self):
         r = fixture("sample-community")
@@ -120,7 +120,7 @@ class CatalogTests(unittest.TestCase):
             validate_record(r, TODAY)
 
     def test_svg_is_valid_xml_accessible_and_escaped(self):
-        r = fixture("tube360"); r["name"] = '<script>alert("x")</script> & [link]'
+        r = fixture("sample-project"); r["name"] = '<script>alert("x")</script> & [link]'
         svg = badge_svg(r, TODAY); tree = ElementTree.fromstring(svg)
         self.assertEqual(tree.attrib["role"], "img")
         self.assertNotIn("<script>", svg)
@@ -141,7 +141,7 @@ class CatalogTests(unittest.TestCase):
                 self.assertIn("No org update channel", text)
 
     def test_readme_badges_are_short_and_do_not_contain_demo_labels(self):
-        labels = {"tube360": "Official", "sample-reviewed": "Reviewed v1.2.3",
+        labels = {"sample-project": "Official", "sample-reviewed": "Reviewed v1.2.3",
                   "sample-unreviewed": "Outdated v1.2.3", "sample-expired": "Expired",
                   "sample-revoked": "Revoked"}
         for slug,label in labels.items():
@@ -155,12 +155,12 @@ class CatalogTests(unittest.TestCase):
                 self.assertIn('data:image/jpeg;base64,',svg)
         for slug,kind in [('sample-unreviewed','outdated'),('sample-expired','expired')]:
             self.assertIn(PALETTES[kind]['border'],badge_svg(fixture(slug),TODAY))
-        self.assertIn(NEON,badge_svg(fixture('tube360'),TODAY))
+        self.assertIn(NEON,badge_svg(fixture('sample-project'),TODAY))
 
     def test_every_state_has_a_distinct_vector_icon_word_and_color(self):
         shapes,colors,words=set(),set(),set()
         ns={'s':'http://www.w3.org/2000/svg'}
-        for slug,kind in [('tube360','official'),('sample-reviewed','reviewed'),('sample-unreviewed','outdated'),('sample-expired','expired'),('sample-revoked','revoked')]:
+        for slug,kind in [('sample-project','official'),('sample-reviewed','reviewed'),('sample-unreviewed','outdated'),('sample-expired','expired'),('sample-revoked','revoked')]:
             with self.subTest(slug=slug):
                 tree=ElementTree.fromstring(badge_svg(fixture(slug),TODAY))
                 icon=tree.find(f'.//s:g[@data-icon="{kind}"]',ns)
@@ -172,7 +172,7 @@ class CatalogTests(unittest.TestCase):
                 colors.add(PALETTES[kind]['right'])
                 words.add(tree.findall('.//s:text',ns)[-1].text.split()[0])
         self.assertEqual((len(shapes),len(colors),len(words)),(5,5,5))
-        official=badge_svg(fixture('tube360'),TODAY)
+        official=badge_svg(fixture('sample-project'),TODAY)
         self.assertIn('feGaussianBlur',official)
         self.assertIn('highest level, continuous',official)
         self.assertNotIn('feGaussianBlur',badge_svg(fixture(),TODAY))
@@ -183,7 +183,7 @@ class CatalogTests(unittest.TestCase):
             linear=[v/12.92 if v<=0.04045 else ((v+0.055)/1.055)**2.4 for v in rgb]
             return sum(v*w for v,w in zip(linear,(0.2126,0.7152,0.0722)))
         ns={'s':'http://www.w3.org/2000/svg'}
-        for slug in ('tube360','sample-reviewed','sample-unreviewed','sample-expired','sample-revoked'):
+        for slug in ('sample-project','sample-reviewed','sample-unreviewed','sample-expired','sample-revoked'):
             tree=ElementTree.fromstring(badge_svg(fixture(slug),TODAY))
             foreground=tree.find('.//s:g[@font-family]',ns).attrib['fill']
             panels=tree.findall('.//s:g[@clip-path]/s:path',ns)[:2]
@@ -194,7 +194,7 @@ class CatalogTests(unittest.TestCase):
                     self.assertGreaterEqual((b+0.05)/(a+0.05),4.5)
 
     def test_official_star_is_small_outlined_and_aligned_with_text_baseline(self):
-        svg=badge_svg(fixture('tube360'),TODAY)
+        svg=badge_svg(fixture('sample-project'),TODAY)
         ns={'s':'http://www.w3.org/2000/svg'}
         tree=ElementTree.fromstring(svg)
         star=tree.find('.//s:g[@data-icon="official"]/s:path',ns)
@@ -212,15 +212,15 @@ class CatalogTests(unittest.TestCase):
         self.assertLessEqual(abs(max(y for x,y in points)/2-baseline),1)
 
     def test_snippet_alts_follow_states_and_the_requested_snapshot_date(self):
-        for slug,word in [('tube360','Official'),('sample-reviewed','Reviewed v1.2.3'),('sample-unreviewed','Outdated v1.2.3'),('sample-expired','Expired'),('sample-revoked','Revoked')]:
+        for slug,word in [('sample-project','Official'),('sample-reviewed','Reviewed v1.2.3'),('sample-unreviewed','Outdated v1.2.3'),('sample-expired','Expired'),('sample-revoked','Revoked')]:
             self.assertIn(f'[![Revive360 {word}]',snippet(fixture(slug),as_of=TODAY))
         self.assertIn('[![Revive360 Expired]',snippet(fixture(),as_of=date(2027,3,9)))
-        self.assertIn('[![Revive360 Project]',snippet(fixture('tube360'),medal=True,as_of=TODAY))
+        self.assertIn('[![Revive360 Project]',snippet(fixture('sample-project'),medal=True,as_of=TODAY))
 
     def test_medal_is_project_only_and_revocation_overrides_green(self):
         for slug in ('sample-reviewed','sample-unreviewed','sample-revoked','sample-expired','sample-community'):
             self.assertIsNone(project_medal_svg(fixture(slug),TODAY))
-        r=fixture('tube360'); svg=project_medal_svg(r,TODAY)
+        r=fixture('sample-project'); svg=project_medal_svg(r,TODAY)
         self.assertEqual(ElementTree.fromstring(svg).attrib['width'],'512')
         self.assertNotIn('Demo',svg)
         r['revocation']={'date':'2026-11-25','reason':'Test revocation'}
@@ -231,14 +231,14 @@ class CatalogTests(unittest.TestCase):
             snippet(fixture(),medal=True)
 
     def test_pngs_render_at_twice_svg_size_with_transparent_medal_corners(self):
-        badge=badge_svg(fixture('tube360'),TODAY)
+        badge=badge_svg(fixture('sample-project'),TODAY)
         rendered=Image.open(io.BytesIO(png(badge)))
         self.assertEqual(rendered.size,(474,72))
-        image=Image.open(io.BytesIO(png(project_medal_svg(fixture('tube360'),TODAY))))
+        image=Image.open(io.BytesIO(png(project_medal_svg(fixture('sample-project'),TODAY))))
         self.assertEqual(image.size,(1024,1024))
         self.assertEqual(image.getpixel((0,0))[3],0)
         self.assertGreater(image.getpixel((512,512))[3],0)
-        self.assertIn('tube360-medal.png',snippet(fixture('tube360'),medal=True,extension='png'))
+        self.assertIn('sample-project-medal.png',snippet(fixture('sample-project'),medal=True,extension='png'))
 
     def test_generation_is_deterministic_and_prunes_stale_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -252,8 +252,8 @@ class CatalogTests(unittest.TestCase):
             self.assertEqual(len(list((output / "apps").glob("*.md"))), 6)
             self.assertEqual(len(list((output / "badges").glob("*.svg"))), 6)
             self.assertEqual(len(list((output / "badges").glob("*.png"))), 6)
-            self.assertTrue((output/'badges/tube360-medal.svg').is_file())
-            self.assertFalse(any((output/'badges').glob('sample-*-medal.*')))
+            self.assertTrue((output/'badges/sample-project-medal.svg').is_file())
+            self.assertEqual({p.name for p in (output/'badges').glob('*-medal.*')}, {'sample-project-medal.svg','sample-project-medal.png'})
             self.assertFalse((output / "badges/sample-community.svg").exists())
             index = (output / "README.md").read_text()
             self.assertLess(index.index("## Revive360 Project"), index.index("## Reviewed"))

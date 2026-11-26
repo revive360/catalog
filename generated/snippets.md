@@ -26,6 +26,32 @@ Compact PNG:
 [![Revive360 Expired](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-expired.png)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-expired.md)
 ```
 
+## sample-project
+
+Compact SVG:
+
+```markdown
+[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
+```
+
+Compact PNG:
+
+```markdown
+[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project.png)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
+```
+
+Project medal (SVG):
+
+```markdown
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project-medal.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
+```
+
+Project medal (PNG):
+
+```markdown
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project-medal.png)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
+```
+
 ## sample-reviewed
 
 Compact SVG:
@@ -66,30 +92,4 @@ Compact PNG:
 
 ```markdown
 [![Revive360 Outdated v1.2.3](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-unreviewed.png)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-unreviewed.md)
-```
-
-## tube360
-
-Compact SVG:
-
-```markdown
-[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
-```
-
-Compact PNG:
-
-```markdown
-[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.png)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
-```
-
-Project medal (SVG):
-
-```markdown
-[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
-```
-
-Project medal (PNG):
-
-```markdown
-[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.png)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
 ```

@@ -142,10 +142,10 @@ def generate(output: Path, today: date) -> int:
     medal_png = base64.b64encode((ROOT/'generated/badges'/f'{project["id"]}-medal.png').read_bytes()).decode()
     html += [f'<figure class="medal-demo"><a href="#{project_target}">{medal_svg}</a><figcaption>Medalha exclusiva Project<br><a download="{project["id"]}-medal.png" href="data:image/png;base64,{medal_png}">Baixar PNG</a> · <a href="#{project_target}">Markdown de uso</a></figcaption></figure><div class="badge-samples">']
     by_id = {r['id']:r for r in records}
-    for slug,label in [('tube360','Project oficial: nível máximo, validade contínua'),('sample-reviewed','Versão revisada: vale para a versão e o hash registrados'),('sample-unreviewed','Versão atual não revisada: v1.2.3 é a versão antes revisada'),('sample-expired','Expirado: o prazo de confirmação do autor terminou'),('sample-revoked','Revogado: a revisão foi retirada; confira a ficha')]:
+    for slug,label in [('sample-project','Project oficial: nível máximo, validade contínua'),('sample-reviewed','Versão revisada: vale para a versão e o hash registrados'),('sample-unreviewed','Versão atual não revisada: v1.2.3 é a versão antes revisada'),('sample-expired','Expirado: o prazo de confirmação do autor terminou'),('sample-revoked','Revogado: a revisão foi retirada; confira a ficha')]:
         r=by_id[slug]; target=ids[(ROOT/'generated/apps'/f'{slug}.md').resolve()]
         html += [f'<div class="badge-sample"><a href="#{target}" aria-label="Conferir {escape(label,quote=True)}">{namespace_svg(badge_svg(r,today),"showcase")}</a><p>{label}</p></div>']
-    html += ['</div></div></section><section id="catalogo"><h2>Puxa a ficha antes de rodar.</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> Tube360 continua na conta do autor. Seu exemplo Project mostra um futuro repo na org; não afirma transferência, teste físico ou revisão concluída. Os outros apps e as evidências são fictícios.</p>']
+    html += ['</div></div></section><section id="catalogo"><h2>Puxa a ficha antes de rodar.</h2><p class="warning"><strong>Todos os registros abaixo são demonstrações.</strong> O exemplo Project mostra como fica a ficha de um app da org; não afirma teste físico nem revisão concluída. Os outros apps e as evidências são fictícios.</p>']
     for tier in ('project', 'reviewed', 'community'):
         html += [f'<div class="catalog-group"><h3>{LABELS[tier]}</h3>']
         for r in records:

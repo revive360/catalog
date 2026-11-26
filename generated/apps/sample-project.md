@@ -1,4 +1,4 @@
-# Tube360
+# Sample Project app
 
 **Revive360 Project — Valid**
 
@@ -6,13 +6,13 @@ Check the source, version and hash. The badge links here for a reason.
 
 Status calculated on **2026-11-25** from the recorded data; not live upstream monitoring.
 
-> **DEMONSTRATION ONLY — not a certification.** Demonstration only\. Actual repository remains https://github\.com/PedroHenrique0713/tube360\. No transfer, review, real\-console test or signed CI release is claimed\. Version, commits, hashes and evidence are synthetic\.
+> **DEMONSTRATION ONLY — not a certification.** Demonstration only\. No real app, review, real\-console test or signed CI release is claimed\. Version, commits, hashes and evidence are synthetic\.
 
-![Revive360 Official](../badges/tube360.svg)
+![Revive360 Official](../badges/sample-project.svg)
 
-YouTube on the 360\. Here is how its Project record would look\.
+How a Revive360 Project record looks\.
 
-Repository: https://github.com/revive360/tube360
+Repository: https://github.com/revive360/sample-project
 
 Owner: PedroHenrique0713. License: MIT. Membership is not a badge.
 
@@ -53,21 +53,21 @@ Review is not a complete audit or warranty. Software is as is under its license.
 ## Put it in your README
 
 ```markdown
-[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+[![Revive360 Official](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
 ```
 
 [Back to catalog](../README.md)
 
 ## Put the Project medal up top
 
-![Revive360 Project medal](../badges/tube360-medal.svg)
+![Revive360 Project medal](../badges/sample-project-medal.svg)
 
 ```markdown
-[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project-medal.svg)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
 ```
 
 PNG alternative:
 
 ```markdown
-[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/tube360-medal.png)](https://github.com/revive360/catalog/blob/main/generated/apps/tube360.md)
+[![Revive360 Project](https://raw.githubusercontent.com/revive360/catalog/main/generated/badges/sample-project-medal.png)](https://github.com/revive360/catalog/blob/main/generated/apps/sample-project.md)
 ```

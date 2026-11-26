@@ -1,13 +1,13 @@
 {
-  "id": "tube360",
-  "name": "Tube360",
-  "summary": "YouTube on the 360. Here is how its Project record would look.",
+  "id": "sample-project",
+  "name": "Sample Project app",
+  "summary": "How a Revive360 Project record looks.",
   "tier": "project",
-  "repository": "https://github.com/revive360/tube360",
+  "repository": "https://github.com/revive360/sample-project",
   "owner": "PedroHenrique0713",
   "license": "MIT",
   "example": true,
-  "example_note": "Demonstration only. Actual repository remains https://github.com/PedroHenrique0713/tube360. No transfer, review, real-console test or signed CI release is claimed. Version, commits, hashes and evidence are synthetic.",
+  "example_note": "Demonstration only. No real app, review, real-console test or signed CI release is claimed. Version, commits, hashes and evidence are synthetic.",
   "current": {
     "version": "v1.2.3",
     "source_commit": "1111111111111111111111111111111111111111",
