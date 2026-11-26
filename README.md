@@ -47,6 +47,6 @@ Keep `.github` and `devkit` next to this checkout, then make the owner preview:
 
 One file to pass around: profiles in three languages, all first-party Markdown docs, readable issue forms, app records, badges and the mascot. Open it offline. No CDN, remote fonts or image requests. The standalone catalog index also works on its own. Upstream license texts keep their source links and are not presented as house policy.
 
-**Risk/privacy:** Homebrew can cause Xbox Live bans, data loss or console damage. No collection without opt-in; login/tokens stay on the console. Third-party terms risk is the author's; no DRM/paywall bypass. Use private vulnerability reporting and [official Discussions](https://github.com/orgs/revive360/discussions) until `CONTACT_DECEMBER_2026_TODO` is replaced with confirmed email/domain in December.
+**Risk/privacy:** Homebrew can cause Xbox Live bans, data loss or console damage. No collection without opt-in; login/tokens stay on the console. Third-party terms risk is the author's; no DRM/paywall bypass. Use private vulnerability reporting and [official Discussions](https://github.com/orgs/revive360/discussions) until the org email is confirmed in December.
 
 Code/docs are MIT; branding and upstream notices retain their separate rights. [GitHub setup checklist](https://github.com/revive360/.github/blob/main/SETUP.md) and [Free CI plan](https://github.com/revive360/.github/blob/main/CI.md).
