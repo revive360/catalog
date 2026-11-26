@@ -1,4 +1,4 @@
-# Revive360 catalog
+<p align="center"><img src="assets/header.svg" alt="Revive360 catalog: check the record before you run it" width="100%"></p>
 
 Pick an app. Check its record. The badge brings you here so you can see the source, version and hash for yourself. This repo keeps the catalog, builds the SVG/PNG badges and Project medal, and gives you the README snippets. Run it locally; publication is a separate owner action. Nothing pushes, contacts an app or queries a console by itself.
 
