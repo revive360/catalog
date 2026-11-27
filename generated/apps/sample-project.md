@@ -4,7 +4,7 @@
 
 Check the source, version and hash. The badge links here for a reason.
 
-Status calculated on **2026-11-25** from the recorded data; not live upstream monitoring.
+Status calculated on **2026-11-26** from the recorded data; not live upstream monitoring.
 
 > **DEMONSTRATION ONLY — not a certification.** Demonstration only\. No real app, review, real\-console test or signed CI release is claimed\. Version, commits, hashes and evidence are synthetic\.
 

@@ -2,6 +2,7 @@ from datetime import date
 import json
 import io
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 from xml.etree import ElementTree
@@ -19,9 +20,21 @@ def fixture(slug="sample-reviewed"):
     return json.loads((ROOT / "data/apps" / f"{slug}.json").read_text())
 
 
+# The six demonstrations are pinned to TODAY; real records carry their own dates.
+SAMPLES = Path(tempfile.mkdtemp(prefix="catalog-samples-"))
+for sample in (ROOT / "data/apps").glob("sample-*.json"):
+    shutil.copy(sample, SAMPLES / sample.name)
+
+
 class CatalogTests(unittest.TestCase):
     def test_all_six_examples_validate(self):
-        self.assertEqual(len(load_records(ROOT / "data/apps", TODAY)), 6)
+        self.assertEqual(len(load_records(SAMPLES, TODAY)), 6)
+
+    def test_real_records_validate_today(self):
+        real = [p for p in (ROOT / "data/apps").glob("*.json") if not p.name.startswith("sample-")]
+        records = load_records(ROOT / "data/apps", date.today())
+        self.assertEqual(len(records), 6 + len(real))
+        self.assertTrue(all(not r["example"] for r in records if not r["id"].startswith("sample-")))
 
     def test_schema_rejects_unsafe_or_incomplete_inputs(self):
         for key, value in [("sha256", "not-a-hash"), ("source_commit", "123"),
@@ -243,10 +256,10 @@ class CatalogTests(unittest.TestCase):
     def test_generation_is_deterministic_and_prunes_stale_outputs(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "out"
-            render(ROOT / "data/apps", output, TODAY)
+            render(SAMPLES, output, TODAY)
             before = {p.relative_to(output): p.read_bytes() for p in output.rglob("*") if p.is_file()}
             (output / "badges/stale.svg").write_text("stale")
-            render(ROOT / "data/apps", output, TODAY)
+            render(SAMPLES, output, TODAY)
             after = {p.relative_to(output): p.read_bytes() for p in output.rglob("*") if p.is_file()}
             self.assertEqual(before, after)
             self.assertEqual(len(list((output / "apps").glob("*.md"))), 6)
@@ -284,7 +297,7 @@ class CatalogTests(unittest.TestCase):
             (output / "apps").mkdir()
             (output / "apps/important.txt").write_text("preserve")
             with self.assertRaisesRegex(ValueError, "previously generated"):
-                render(ROOT / "data/apps", output, TODAY)
+                render(SAMPLES, output, TODAY)
             self.assertEqual((output / "apps/important.txt").read_text(), "preserve")
 
 

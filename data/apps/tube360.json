@@ -1,0 +1,35 @@
+{
+  "id": "tube360",
+  "name": "Tube360",
+  "summary": "Native YouTube app for the Xbox 360: browse, search, play up to 1080p30, YouTube Music and Nest audio, all on the console.",
+  "tier": "project",
+  "repository": "https://github.com/revive360/tube360",
+  "owner": "PedroHenrique0713",
+  "license": "MIT",
+  "example": false,
+  "current": {
+    "version": "v0.3.3",
+    "source_commit": "092607e71f24ae6211c20e1f094194498b7621b7",
+    "sha256": "095f2b806a492a7cd29d3d6694aaca079fc4adb5da1aacf166b5c90e1465af9f",
+    "artifact_url": "https://github.com/revive360/tube360/releases/download/v0.3.3/tube360-v0.3.3-xbox360.zip"
+  },
+  "review": {
+    "reviewer": "PedroHenrique0713",
+    "reviewed_on": "2026-11-26",
+    "release": {
+      "version": "v0.3.3",
+      "source_commit": "092607e71f24ae6211c20e1f094194498b7621b7",
+      "sha256": "095f2b806a492a7cd29d3d6694aaca079fc4adb5da1aacf166b5c90e1465af9f",
+      "artifact_url": "https://github.com/revive360/tube360/releases/download/v0.3.3/tube360-v0.3.3-xbox360.zip"
+    },
+    "self_review_exception": true,
+    "builder": "org-ci",
+    "evidence_url": "https://github.com/revive360/catalog/issues/1",
+    "ci_run_url": "https://github.com/revive360/tube360/actions/runs/45916404405",
+    "attestation_url": "https://github.com/revive360/tube360/attestations/72888615",
+    "console": {
+      "result": "passed",
+      "record_url": "https://github.com/revive360/catalog/issues/1"
+    }
+  }
+}
