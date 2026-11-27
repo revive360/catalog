@@ -33,7 +33,10 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - name: Reproduce committed examples
         run: |
-          python -m catalog.build --as-of 2026-11-25
+          # The committed snapshot records its own date; real records make a fixed date go stale.
+          as_of=$(sed -n 's/^Generated for \([0-9-]*\)\..*/\1/p' generated/README.md)
+          test -n "$as_of"
+          python -m catalog.build --as-of "$as_of"
           git diff --exit-code -- generated
           test -z "$(git ls-files --others --exclude-standard generated)"
       - name: Calculate current recorded states
