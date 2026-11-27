@@ -2,15 +2,17 @@
 
 Meet the apps. Check the record before you run anything.
 
-**Local demonstration dataset. No entry is an active certification.**
+**Includes explicitly marked demonstration entries.**
 
-Generated for 2026-11-25. Check the linked record, not a copied image.
+Generated for 2026-11-26. Check the linked record, not a copied image.
 
 Status is based on manually maintained data. Membership alone is not a badge.
 
 ## Revive360 Project
 
 - [Sample Project app](apps/sample-project.md) — Valid; demonstration only
+
+- [Tube360](apps/tube360.md) — Valid; catalog record
 
 ## Reviewed
 

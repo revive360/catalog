@@ -4,7 +4,7 @@
 
 Check the source, version and hash. The badge links here for a reason.
 
-Status calculated on **2026-11-25** from the recorded data; not live upstream monitoring.
+Status calculated on **2026-11-26** from the recorded data; not live upstream monitoring.
 
 > **DEMONSTRATION ONLY — not a certification.** Fictional discovery entry, no verification and no badge\.
 

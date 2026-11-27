@@ -2,7 +2,7 @@
 
 Pick an app. Check its record. The badge brings you here so you can see the source, version and hash for yourself. This repo keeps the catalog, builds the SVG/PNG badges and Project medal, and gives you the README snippets. Run it locally; publication is a separate owner action. Nothing pushes, contacts an app or queries a console by itself.
 
-**All included records are demonstrations.** Sample commits, versions, hashes and `.invalid` evidence URLs are synthetic; no review, real-console acceptance or signed org release is asserted. Real records start with the first app release built by the org CI.
+**First real record: [Tube360 v0.3.3](generated/apps/tube360.md)**, built by the org CI with signed provenance and accepted on a real console. Records named `sample-*` are demonstrations: their commits, versions, hashes and `.invalid` evidence URLs are synthetic and assert no review, real-console acceptance or signed org release.
 
 ## Levels and ownership
 
